@@ -1,0 +1,26 @@
+services:
+
+  backend:
+    build:
+      context: backend/.
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - type: bind
+        source: database_data/
+        target: /database_data
+    depends_on:
+      - db_migrate
+
+
+  db_migrate:
+    image: python:3.12
+    container_name: db_migrate
+    volumes:
+      - ./:/app
+      - ./backend:/app/backend
+      - ./database_data:/app/database_data
+    working_dir: /app
+    command: >
+      sh -c "pip install alembic pydantic pydantic-settings && alembic upgrade head"
