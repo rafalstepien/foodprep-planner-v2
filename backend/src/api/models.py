@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class Product(BaseModel):
+class InputProduct(BaseModel):
     name: str
     protein: float
     carbohydrates: float
@@ -9,27 +9,48 @@ class Product(BaseModel):
     kcal: float
     
     
-class Products(BaseModel):
-    products: list[Product]
+class InputProducts(BaseModel):
+    products: list[InputProduct]
     
     
-class ProductIds(BaseModel):
+class InputProductIds(BaseModel):
     ids: list[int]
 
 
-class MealProduct(BaseModel):
+class InputMealProduct(BaseModel):
     product_id: int
     product_amount: int
 
 
-class Meal(BaseModel):
+class InputMeal(BaseModel):
     name: str
-    products: list[MealProduct]
+    products: list[InputMealProduct]
 
 
-class Meals(BaseModel):
-    meals: list[Meal]
+class InputMeals(BaseModel):
+    meals: list[InputMeal]
 
 
-class MealIds(BaseModel):
+class InputMealIds(BaseModel):
     ids: list[int]
+
+
+
+class OutputProduct(BaseModel):
+    id: int
+    product: str
+    protein: float
+    carbohydrates: float
+    fat: float
+    kcal: float
+
+
+class OutputMealProduct(BaseModel):
+    product_id: int
+    amount: int
+
+
+class OutputMeal(BaseModel):
+    id: int
+    name: str
+    products: list[OutputMealProduct]

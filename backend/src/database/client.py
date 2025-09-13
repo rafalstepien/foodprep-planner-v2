@@ -74,6 +74,7 @@ class DatabaseClient:
         self.session.commit()
     
     def add_meals(self, meals_dto_array: list[MealDto]):
+        # TODO: handle sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: meals.name
         for m in meals_dto_array:
             new_meal = DatabaseMeal(name=m.name)
             new_meal.meal_products = [

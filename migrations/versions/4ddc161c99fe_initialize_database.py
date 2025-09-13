@@ -1,21 +1,18 @@
-"""initialize and prepopulate
+"""initialize database
 
-Revision ID: 9df69ad4cc5c
+Revision ID: 4ddc161c99fe
 Revises: 
-Create Date: 2025-09-13 21:37:16.923805
+Create Date: 2025-09-13 21:50:35.488444
 
 """
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from backend.src.settings import Settings
-from backend.src.database import DatabaseClient
-
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9df69ad4cc5c'
+revision: str = '4ddc161c99fe'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -49,10 +46,6 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    
-    settings = Settings()
-    db_client = DatabaseClient(settings.database_file_path)
-    db_client.populate_products_table(settings.products_json)
     # ### end Alembic commands ###
 
 
