@@ -7,3 +7,13 @@ run-migrations:
 
 run-backend-server:
 	docker compose up backend
+
+
+REVISION_TEXT="..."
+
+create-revision:
+	alembic revision -m "$(REVISION_TEXT)"
+
+
+# create first revision
+# alembic revision --autogenerate -m "initialize and prepopulate"

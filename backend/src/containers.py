@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from .database.client import DatabaseClient
+from .database import DatabaseClient
 
 
 class Container(containers.DeclarativeContainer):

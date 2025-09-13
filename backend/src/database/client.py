@@ -2,9 +2,14 @@ import json
 from pathlib import Path
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, joinedload
 
-from .models import Products
+from .models import Products as DatabaseProduct
+from .models import Meals as DatabaseMeal
+from .models import MealProducts as DatabaseMealProducts
+
+from .dto import ProductDto, MealProductDto, MealDto
+# from ..api import Products, Meals, ProductIds, MealIds
 
 
 class DatabaseClient:
@@ -13,7 +18,6 @@ class DatabaseClient:
         self.engine = create_engine(
             f"sqlite:///{str(self.database_file_path)}", echo=False, future=True
         )
-
         self._session = sessionmaker(bind=self.engine, expire_on_commit=False)
         self.session = self._session()
 
@@ -22,7 +26,7 @@ class DatabaseClient:
             data = json.load(f)
 
         for entry in data:
-            food = Products(
+            food = DatabaseProduct(
                 product=entry["product"],
                 protein=entry["protein"],
                 carbohydrates=entry["carbohydrates"],
@@ -31,24 +35,57 @@ class DatabaseClient:
             )
             self.session.merge(food)  # upsert
         self.session.commit()
+    
+    def get_all_products(self) -> list[dict]:
+        return [p.as_dict() for p in self.session.query(DatabaseProduct).all()]
+    
+    def get_all_meals(self) -> list[dict]:
+        meals = self.session.query(DatabaseMeal)\
+            .options(joinedload(DatabaseMeal.meal_products).joinedload(DatabaseMealProducts.products))\
+            .all()
+            
+        return [
+            {
+                "id": meal.id,
+                "name": meal.name,
+                "products": [
+                    p.as_dict() for p in meal.meal_products
+                ]
+            } for meal in meals
+        ]
+    
+    def add_products(self, product_dto_array: list[ProductDto]):
+        for pd in product_dto_array:
+            new_product = DatabaseProduct(
+                product=pd.name,
+                protein=pd.protein,
+                carbohydrates=pd.carbohydrates,
+                fat=pd.fat,
+                kcal=pd.kcal,
+            )
+            self.session.merge(new_product)
+        self.session.commit()
+        
+    def delete_products(self, product_ids: list[int]):
+        for _id in product_ids:
+            product = self.session.get(DatabaseProduct, _id)
+            if product:
+                self.session.delete(product)
+        self.session.commit()
+    
+    def add_meals(self, meals_dto_array: list[MealDto]):
+        for m in meals_dto_array:
+            new_meal = DatabaseMeal(name=m.name)
+            new_meal.meal_products = [
+                DatabaseMealProducts(product_id=p.product_id, amount=p.product_amount)
+                for p in m.products  # TODO: handle case when some product don't exist
+            ]
+            self.session.merge(new_meal)
+        self.session.commit()
 
-    def get_all_products(self):
-        return [p.as_dict() for p in self.session.query(Products).all()]
-
-
-# --- CRUD Examples ---
-# # Create
-# new_food = Food(produkt="Nowy produkt", bialko=10, weglowodany=20, tluszcz=5, kcal=150)
-# session.add(new_food)
-# session.commit()
-
-# Read
-
-
-# # Update
-# food.kcal = 270
-# session.commit()
-
-# # Delete
-# session.delete(food)
-# session.commit()
+    def delete_meals(self, meal_ids: list[int]):
+        for _id in meal_ids:
+            meal = self.session.get(DatabaseMeal, _id)
+            if meal:
+                self.session.delete(meal)
+        self.session.commit()
