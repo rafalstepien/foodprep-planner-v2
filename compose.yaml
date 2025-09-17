@@ -1,12 +1,21 @@
 services:
 
   backend:
+    env_file: .env
     build:
       context: backend/.
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     volumes:
       - type: bind
         source: database_data/
         target: /database_data
+
+  frontend:
+    env_file: .env
+    build:
+      context: frontend/.
+      dockerfile: Dockerfile
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"

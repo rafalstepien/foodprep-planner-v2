@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 
-export default function ProductsComponent() {
-  const emptyProduct = {
+
+const BACKEND_BASE_URL = "http://localhost:8000"
+const PRODUCTS_ENDPOINT = BACKEND_BASE_URL + "/products"
+const EMPTY_PRODUCT = {
     product: "",
     protein: "",
     carbohydrates: "",
@@ -9,7 +11,11 @@ export default function ProductsComponent() {
     kcal: "",
   };
 
-  const [product, setProduct] = useState(emptyProduct);
+
+export default function ProductsComponent() {
+
+
+  const [product, setProduct] = useState(EMPTY_PRODUCT);
   const [refresh, setRefresh] = useState(0);
   const [productsData, setProductsData] = useState([]);
 
@@ -17,14 +23,18 @@ export default function ProductsComponent() {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
-  async function sendNewProductToBackend(products) {
+  useEffect(() => {
+    backendGetAllProducts();
+  }, [refresh]);
+
+  async function backendAddProduct(newProduct) {
     try {
-      const response = await fetch("http://localhost:8000/products", {
+      const response = await fetch(PRODUCTS_ENDPOINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(products),
+        body: JSON.stringify(newProduct),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -34,9 +44,9 @@ export default function ProductsComponent() {
     }
   }
 
-  async function sendDeleteRequestToBackend(productId) {
+  async function backendDeleteProduct(productId) {
     try {
-      const response = await fetch("http://localhost:8000/products", {
+      const response = await fetch(PRODUCTS_ENDPOINT, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -52,24 +62,9 @@ export default function ProductsComponent() {
     setRefresh((prev) => prev + 1);
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const newProduct = {
-      name: product.product,
-      protein: Number(product.protein),
-      carbohydrates: Number(product.carbohydrates),
-      fat: Number(product.fat),
-      kcal: Number(product.kcal),
-    };
-    const products = { products: [newProduct] };
-    sendNewProductToBackend(products);
-    setProduct(emptyProduct);
-    setRefresh((prev) => prev + 1);
-  };
-
-  async function fetchMeals() {
+  async function backendGetAllProducts() {
     try {
-      const response = await fetch("http://localhost:8000/products");
+      const response = await fetch(PRODUCTS_ENDPOINT);
       if (!response.ok) throw new Error("Failed to fetch");
       const data = await response.json();
       setProductsData(data);
@@ -78,21 +73,34 @@ export default function ProductsComponent() {
     }
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newProduct = {
+      products: {
+        name: product.product,
+        protein: Number(product.protein),
+        carbohydrates: Number(product.carbohydrates),
+        fat: Number(product.fat),
+        kcal: Number(product.kcal),
+      }
+    };
+    backendAddProduct(newProduct);
+    setProduct(EMPTY_PRODUCT);
+    setRefresh((prev) => prev + 1);
+  };
+
   function DeleteButton({ productId }) {
     return (
       <button
         type="button"
         className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-        onClick={() => sendDeleteRequestToBackend(productId)}
+        onClick={() => backendDeleteProduct(productId)}
       >
         Delete
       </button>
     );
   }
 
-  useEffect(() => {
-    fetchMeals();
-  }, [refresh]);
 
   return (
     <>

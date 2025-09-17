@@ -8,8 +8,7 @@ from .models import Products as DatabaseProduct
 from .models import Meals as DatabaseMeal
 from .models import MealProducts as DatabaseMealProducts
 
-from .dto import ProductDto, MealProductDto, MealDto
-# from ..api import Products, Meals, ProductIds, MealIds
+from .dto import ProductDto, MealDto
 
 
 class DatabaseClient:
