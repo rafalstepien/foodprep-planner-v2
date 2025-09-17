@@ -1,37 +1,5 @@
 import { useState, useEffect } from "react";
 
-function ProductsTable({ productsData }) {
-  return (
-    <div className="w-6/12 overflow-x-auto rounded-2xl shadow">
-      <table className="min-w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="px-4 py-2">Name</th>
-            <th className="px-4 py-2">Protein</th>
-            <th className="px-4 py-2">Carbs</th>
-            <th className="px-4 py-2">Fat</th>
-            <th className="px-4 py-2">Kcal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productsData.map((meal, i) => (
-            <tr
-              key={meal.id}
-              className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}
-            >
-              <td className="px-4 py-2">{meal.product}</td>
-              <td className="px-4 py-2">{meal.protein}</td>
-              <td className="px-4 py-2">{meal.carbohydrates}</td>
-              <td className="px-4 py-2">{meal.fat}</td>
-              <td className="px-4 py-2">{meal.kcal}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 export default function ProductsComponent() {
   const emptyProduct = {
     product: "",
@@ -66,6 +34,24 @@ export default function ProductsComponent() {
     }
   }
 
+  async function sendDeleteRequestToBackend(productId) {
+    try {
+      const response = await fetch("http://localhost:8000/products", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: [productId] }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Failed to delete the product", error);
+    }
+    setRefresh((prev) => prev + 1);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newProduct = {
@@ -75,7 +61,7 @@ export default function ProductsComponent() {
       fat: Number(product.fat),
       kcal: Number(product.kcal),
     };
-    const products = {"products": [newProduct]}
+    const products = { products: [newProduct] };
     sendNewProductToBackend(products);
     setProduct(emptyProduct);
     setRefresh((prev) => prev + 1);
@@ -92,6 +78,18 @@ export default function ProductsComponent() {
     }
   }
 
+  function DeleteButton({ productId }) {
+    return (
+      <button
+        type="button"
+        className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+        onClick={() => sendDeleteRequestToBackend(productId)}
+      >
+        Delete
+      </button>
+    );
+  }
+
   useEffect(() => {
     fetchMeals();
   }, [refresh]);
@@ -99,7 +97,37 @@ export default function ProductsComponent() {
   return (
     <>
       <div className="flex flex-col items-center mt-10 mb-10 gap-4">
-        <ProductsTable productsData={productsData} />
+        <div className="w-6/12 overflow-x-auto rounded-2xl shadow">
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="px-4 py-2">Name</th>
+                <th className="px-4 py-2">Protein</th>
+                <th className="px-4 py-2">Carbs</th>
+                <th className="px-4 py-2">Fat</th>
+                <th className="px-4 py-2">Kcal</th>
+                <th className="px-4 py-2"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {productsData.map((product, i) => (
+                <tr
+                  key={product.id}
+                  className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                >
+                  <td className="px-4 py-2">{product.product}</td>
+                  <td className="px-4 py-2">{product.protein}</td>
+                  <td className="px-4 py-2">{product.carbohydrates}</td>
+                  <td className="px-4 py-2">{product.fat}</td>
+                  <td className="px-4 py-2">{product.kcal}</td>
+                  <td className="px-4 py-2">
+                    <DeleteButton productId={product.id} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <form
           onSubmit={handleSubmit}
           className="w-6/12 p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4"
