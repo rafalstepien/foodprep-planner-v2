@@ -8,7 +8,7 @@ const root = createRoot(document.getElementById("root"));
 root.render(
   <>
     <Header />
-    <div className="w-6/12 mx-auto flex flex-col items-center mt-10 mb-10 gap-4">
+    <div className="w-6/12 mx-auto flex flex-col items-center mt-10 mb-10 gap-8">
       <ProductsComponent />
       <MealsComponent />
     </div>

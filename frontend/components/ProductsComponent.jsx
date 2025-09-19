@@ -190,11 +190,7 @@ function ProductForm({ onSubmit }) {
 
   return (
     <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4">
-      <h2 className="text-lg font-bold text-gray-800">Add Product</h2>
-      <p className="text-sm text-gray-600">
-        Enter nutritional values per 100g of product
-      </p>
-
+      <h2 className="text-lg font-bold text-gray-800">Create Product</h2>
       <div className="grid gap-3 mb-1 md:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
         <input
           type="text"

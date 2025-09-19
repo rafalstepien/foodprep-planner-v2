@@ -145,7 +145,7 @@ function DeleteMealButton({ mealId, onDelete }) {
 function MealTable({ meal, deleteProductFromMeal, deleteMeal }) {
   return (
     <>
-      <div className="flex flex-row gap-4">
+      <div className="w-full items-left flex flex-row gap-4">
         <h2 className="text-lg font-bold text-gray-800 text-left">
           {meal.name}
         </h2>
@@ -289,6 +289,10 @@ function MealTablesAndForm({
       <AddMealForm onSubmit={addNewMeal} />
     </>
   );
+}
+
+function AddProductToMealForm () {
+  
 }
 
 export default function MealsComponent() {
