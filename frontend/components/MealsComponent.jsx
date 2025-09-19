@@ -45,17 +45,6 @@ const mealsService = {
       throw new Error(`Failed to delete meal: ${response.status}`);
     }
   },
-
-  // async delete(mealId) {
-  //   const response = await fetch(MEALS_ENDPOINT, {
-  //     method: "DELETE",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ ids: [mealId] }),
-  //   });
-  //   if (!response.ok) {
-  //     throw new Error(`Failed to delete meal: ${response.status}`);
-  //   }
-  // },
 };
 
 function useMeals() {
@@ -215,9 +204,6 @@ function AddMealForm({ onSubmit }) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    console.log("Inside handle submit");
-    console.log(meal);
-
     try {
       await onSubmit(meal);
       setMeal(EMPTY_MEAL);
@@ -237,7 +223,7 @@ function AddMealForm({ onSubmit }) {
     "w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent";
 
   return (
-    <div className="w-6/12 p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4">
+    <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4">
       <h2 className="text-lg font-bold text-gray-800">Create Meal</h2>
       <div className="grid gap-3 mb-1 md:grid-cols-2">
         <input
@@ -263,75 +249,6 @@ function AddMealForm({ onSubmit }) {
   );
 }
 
-// function MealForm({ onSubmit }) {
-//   const [mealProducts, setMealProducts] = useState([]);
-//   const [isSubmitting, setIsSubmitting] = useState(false);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setMeal((prev) => ({ ...prev, [name]: value }));
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setIsSubmitting(true);
-
-//     try {
-//       await onSubmit({name: "", products: mealProducts});
-//       setMeal(EMPTY_MEAL);
-//     } catch (error) {
-//       // Error handling is done in the parent component
-//     } finally {
-//       setIsSubmitting(false);
-//     }
-//   };
-
-// const inputClassName =
-//   "w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent";
-
-//   return (
-//     <div className="w-6/12 p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4">
-//       <h2 className="text-lg font-bold text-gray-800">Add Meal</h2>
-//       <p className="text-sm text-gray-600">
-//         Enter product name
-//       </p>
-
-//       <div className="grid gap-3 mb-1 md:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
-//         <input
-//           type="text"
-//           name="product"
-//           placeholder="Product name"
-//           value={product.name}
-//           onChange={handleChange}
-//           className={inputClassName}
-//           required
-//           disabled={isSubmitting}
-//         />
-//         <input
-//           type="number"
-//           name="amount"
-//           placeholder="Product amount"
-//           value={product.amount}
-//           onChange={handleChange}
-//           className={inputClassName}
-//           min="0"
-//           step="0.1"
-//           required
-//           disabled={isSubmitting}
-//         />
-//       </div>
-//       <button
-//         type="submit"
-//         disabled={isSubmitting}
-//         onClick={handleSubmit}
-//         className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-//       >
-//         {isSubmitting ? "Adding..." : "Add Meal"}
-//       </button>
-//     </div>
-//   );
-// }
-
 function ErrorMessage({ error, onDismiss }) {
   if (!error) return null;
 
@@ -347,6 +264,30 @@ function ErrorMessage({ error, onDismiss }) {
         </button>
       </div>
     </div>
+  );
+}
+
+function MealTablesAndForm({
+  meals,
+  addNewMeal,
+  deleteProductFromMeal,
+  deleteMeal,
+}) {
+  return (
+    <>
+      {meals.length == 0 ? (
+        <div>Add your first meal</div>
+      ) : (
+        meals.map((meal, i) => (
+          <MealTable
+            meal={meal}
+            deleteProductFromMeal={deleteProductFromMeal}
+            deleteMeal={deleteMeal}
+          />
+        ))
+      )}
+      <AddMealForm onSubmit={addNewMeal} />
+    </>
   );
 }
 
@@ -369,23 +310,14 @@ export default function MealsComponent() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10 mb-10 gap-4">
+    <>
       <ErrorMessage error={error} onDismiss={handleDismissError} />
-
-      <div className="flex flex-col gap-4">
-        {meals.length == 0 ? (
-          <div>Add your first meal</div>
-        ) : (
-          meals.map((meal, i) => (
-            <MealTable
-              meal={meal}
-              deleteProductFromMeal={deleteProductFromMeal}
-              deleteMeal={deleteMeal}
-            />
-          ))
-        )}
-      </div>
-      <AddMealForm onSubmit={addNewMeal} />
-    </div>
+      <MealTablesAndForm
+        meals={meals}
+        addNewMeal={addNewMeal}
+        deleteProductFromMeal={deleteProductFromMeal}
+        deleteMeal={deleteMeal}
+      />
+    </>
   );
 }

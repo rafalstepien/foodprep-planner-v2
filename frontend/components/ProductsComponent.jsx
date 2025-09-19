@@ -120,7 +120,7 @@ function DeleteButton({ productId, onDelete }) {
 
 function ProductsTable({ products, onDelete }) {
   return (
-    <div className="w-6/12 overflow-x-auto rounded-2xl shadow">
+    <div className="w-full overflow-x-auto rounded-2xl shadow">
       <table className="min-w-full border-collapse">
         <thead>
           <tr className="bg-gray-100 text-left">
@@ -189,7 +189,7 @@ function ProductForm({ onSubmit }) {
     "w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent";
 
   return (
-    <div className="w-6/12 p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4">
+    <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4">
       <h2 className="text-lg font-bold text-gray-800">Add Product</h2>
       <p className="text-sm text-gray-600">
         Enter nutritional values per 100g of product
@@ -272,7 +272,7 @@ function ErrorMessage({ error, onDismiss }) {
   if (!error) return null;
 
   return (
-    <div className="w-6/12 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+    <div className="w-full bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
       <div className="flex justify-between items-center">
         <span>{error}</span>
         <button
@@ -299,12 +299,10 @@ export default function ProductsComponent() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10 mb-10 gap-4">
+    <>
       <ErrorMessage error={error} onDismiss={handleDismissError} />
-
       <ProductsTable products={products} onDelete={deleteProduct} />
-
       <ProductForm onSubmit={addProduct} />
-    </div>
+    </>
   );
 }

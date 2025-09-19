@@ -102,16 +102,16 @@ async def add_product_to_meal(
 ):
     products_per_meal_dto_array = [
         AddProductsToMealDto(
-            meal_id=meal_product.meal_id,
+            meal_id=meal.meal_id,
             products=[
                 MealProductDto(
                     product_id=p.product_id,
                     product_amount=p.product_amount,
                 )
-                for p in meal_product.products
+                for p in meal.products
             ],
         )
-        for meal_product in meal_products.meal_products
+        for meal in meal_products.meals
     ]
         
     db_client.add_products_to_meals(products_per_meal_dto_array)
