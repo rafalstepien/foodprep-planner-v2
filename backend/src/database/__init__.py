@@ -1,6 +1,6 @@
 from .client import DatabaseClient
 from .models import Base, Products, Meals, MealProducts
-from .dto import MealDto, ProductDto, MealProductDto
+from .dto import EmptyMealDto, ProductDto, MealProductDto, AddProductsToMealDto, MealProductsToDelete
 
 
 __all__ = [
@@ -9,7 +9,9 @@ __all__ = [
     "MealProducts",
     "Base",
     "DatabaseClient",
-    "MealDto",
+    "EmptyMealDto",
     "ProductDto",
     "MealProductDto",
+    "AddProductsToMealDto",
+    "MealProductsToDelete",
 ]

@@ -8,7 +8,7 @@ from .models import Products as DatabaseProduct
 from .models import Meals as DatabaseMeal
 from .models import MealProducts as DatabaseMealProducts
 
-from .dto import ProductDto, MealDto
+from .dto import ProductDto, EmptyMealDto, AddProductsToMealDto, MealProductsToDelete
 
 
 class DatabaseClient:
@@ -38,6 +38,12 @@ class DatabaseClient:
     def get_all_products(self) -> list[dict]:
         return [p.as_dict() for p in self.session.query(DatabaseProduct).all()]
     
+    def get_one_product(self, product_id: int) -> dict:
+        p = self.session.query(DatabaseProduct)\
+            .filter(DatabaseProduct.id == product_id)\
+            .first()
+        return p.as_dict()
+    
     def get_all_meals(self) -> list[dict]:
         meals = self.session.query(DatabaseMeal)\
             .options(joinedload(DatabaseMeal.meal_products).joinedload(DatabaseMealProducts.products))\
@@ -48,7 +54,8 @@ class DatabaseClient:
                 "id": meal.id,
                 "name": meal.name,
                 "products": [
-                    p.as_dict() for p in meal.meal_products
+                    self.get_one_product(p.product_id)
+                    for p in meal.meal_products
                 ]
             } for meal in meals
         ]
@@ -72,14 +79,25 @@ class DatabaseClient:
                 self.session.delete(product)
         self.session.commit()
     
-    def add_meals(self, meals_dto_array: list[MealDto]):
-        # TODO: handle sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: meals.name
+    def add_products_to_meals(self, meals_dto_array: list[AddProductsToMealDto]):
+        for request_meal in meals_dto_array:
+            db_meal = self.session.query(DatabaseMeal)\
+                .filter(DatabaseMeal.id == request_meal.meal_id)\
+                .first()
+                
+            new_products = [
+                DatabaseMealProducts(product_id=p.product_id, amount=p.product_amount)
+                for p in request_meal.products  # TODO: handle case when some product don't exist
+            ]
+            db_meal.meal_products += new_products
+            self.session.merge(db_meal)
+        self.session.commit()
+        # # TODO: handle sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: meals.name
+
+        
+    def add_empty_meal(self, meals_dto_array: list[EmptyMealDto]):
         for m in meals_dto_array:
             new_meal = DatabaseMeal(name=m.name)
-            new_meal.meal_products = [
-                DatabaseMealProducts(product_id=p.product_id, amount=p.product_amount)
-                for p in m.products  # TODO: handle case when some product don't exist
-            ]
             self.session.merge(new_meal)
         self.session.commit()
 
@@ -88,4 +106,19 @@ class DatabaseClient:
             meal = self.session.get(DatabaseMeal, _id)
             if meal:
                 self.session.delete(meal)
+        self.session.commit()
+        
+    def delete_products_from_meals(self, meals_products_dto_array: list[MealProductsToDelete]):
+        for request_meal in meals_products_dto_array:
+            db_meal = self.session.query(DatabaseMeal)\
+                .filter(DatabaseMeal.id == request_meal.meal_id)\
+                .first()
+            
+            new_products = [
+                p for p in db_meal.meal_products
+                if p.product_id not in request_meal.product_ids
+            ]
+            
+            db_meal.meal_products = new_products
+            self.session.merge(db_meal)
         self.session.commit()

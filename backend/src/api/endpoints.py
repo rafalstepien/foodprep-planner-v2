@@ -1,9 +1,9 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Response, status
 
-from .models import InputMealIds, InputMeals, InputProducts, InputMealIds, InputProductIds, OutputProduct, OutputMeal
+from .models import MealsToDelete, InputMeals, InputProducts, MealsToDelete, ProductsToDelete, OutputProduct, OutputMeal, InputMealProducts, InputMealsProductsToDelete
 from ..containers import Container
-from ..database import DatabaseClient, MealDto, ProductDto, MealProductDto
+from ..database import DatabaseClient, EmptyMealDto, ProductDto, MealProductDto, AddProductsToMealDto, MealProductsToDelete
 
 router = APIRouter()
 
@@ -15,6 +15,15 @@ async def get_all_products(
 ) -> list[OutputProduct]:
     products = db_client.get_all_products()
     return [OutputProduct(**p) for p in products]
+
+
+@router.get("/products/{id}")
+@inject
+async def get_one_product_data(
+    id: int,
+    db_client: DatabaseClient = Depends(Provide[Container.db_client]),
+) -> OutputProduct:
+    return db_client.get_one_product(id)
 
 
 @router.post("/products")
@@ -40,7 +49,7 @@ async def add_product(
 @router.delete("/products")
 @inject
 async def delete_product(
-    product_ids: InputProductIds,
+    product_ids: ProductsToDelete,
     db_client: DatabaseClient = Depends(Provide[Container.db_client]),
 ):
     product_ids = [_id for _id in product_ids.ids]
@@ -62,7 +71,7 @@ async def get_all_meals(
 @router.delete("/meals")
 @inject
 async def delete_meals(
-    meal_ids: InputMealIds,
+    meal_ids: MealsToDelete,
     db_client: DatabaseClient = Depends(Provide[Container.db_client]),
 ):
     meal_ids = [_id for _id in meal_ids.ids]
@@ -72,26 +81,61 @@ async def delete_meals(
 
 @router.post("/meals")
 @inject
-async def add_meal(
+async def add_empty_meal(
     meals: InputMeals,
     db_client: DatabaseClient = Depends(Provide[Container.db_client]),
 ):
     meals_dto_array = [
-        MealDto(
+        EmptyMealDto(
             name=m.name,
-            products=[
-                MealProductDto(
-                    product_id=mp.product_id,
-                    product_amount=mp.product_amount,
-                )
-                for mp in m.products
-            ]
         ) for m in meals.meals
     ]
-    db_client.add_meals(meals_dto_array)
+    db_client.add_empty_meal(meals_dto_array)
     return Response(status_code=status.HTTP_201_CREATED)
 
 
-@router.get("/health-check")
-async def get_all_products() -> dict:
+@router.put("/meals")
+@inject
+async def add_product_to_meal(
+    meal_products: InputMealProducts,
+    db_client: DatabaseClient = Depends(Provide[Container.db_client]),
+):
+    products_per_meal_dto_array = [
+        AddProductsToMealDto(
+            meal_id=meal_product.meal_id,
+            products=[
+                MealProductDto(
+                    product_id=p.product_id,
+                    product_amount=p.product_amount,
+                )
+                for p in meal_product.products
+            ],
+        )
+        for meal_product in meal_products.meal_products
+    ]
+        
+    db_client.add_products_to_meals(products_per_meal_dto_array)
+    return Response(status_code=status.HTTP_201_CREATED)
+
+
+@router.delete("/meals_products")
+@inject
+async def remove_products_from_meals(
+    meals_products_ids: InputMealsProductsToDelete,
+    db_client: DatabaseClient = Depends(Provide[Container.db_client]),
+):
+    meals_products_to_delete_dto = [
+        MealProductsToDelete(
+            meal_id=mp.meal_id,
+            product_ids=mp.product_ids,
+        )
+        for mp in meals_products_ids.meals
+    ]
+    db_client.delete_products_from_meals(meals_products_to_delete_dto)
+    return Response(status_code=status.HTTP_200_OK)
+    
+
+
+@router.get("/healthcheck")
+async def healthcheck() -> dict:
     return {"message": "OK"}

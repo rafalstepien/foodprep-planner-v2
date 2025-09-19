@@ -1,11 +1,11 @@
 from .endpoints import router
-from .models import InputProducts, InputMeals, InputProductIds, InputMealIds
+from .models import InputProducts, InputMeals, ProductsToDelete, MealsToDelete
 
 
 __all__ = [
     "router",
     "InputProducts",
-    "InputProductIds",
+    "ProductsToDelete",
     "InputMeals",
-    "InputMealIds",
+    "MealsToDelete",
 ]
