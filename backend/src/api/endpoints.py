@@ -90,3 +90,8 @@ async def add_meal(
     ]
     db_client.add_meals(meals_dto_array)
     return Response(status_code=status.HTTP_201_CREATED)
+
+
+@router.get("/health-check")
+async def get_all_products() -> dict:
+    return {"message": "OK"}
