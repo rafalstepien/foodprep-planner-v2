@@ -1,0 +1,165 @@
+import Select, { SingleValue } from "react-select";
+import { useState, useEffect } from "react";
+import { mealsService } from "../src/MealsService.ts";
+
+const API_BASE_URL = "http://localhost:8000";
+const MEALS_ENDPOINT = `${API_BASE_URL}/meals`;
+
+interface Option {
+  value: number;
+  label: string;
+}
+
+type ProductData = {
+  id: number;
+  product: string;
+  protein: number;
+  carbohydrates: number;
+  fat: number;
+  kcal: number;
+};
+
+type MealData = {
+  id: number;
+  name: string;
+  products: ProductData[];
+};
+
+function TableHeader(meal: MealData) {
+  return (
+    <div className="w-full items-left flex flex-row gap-4">
+      <h2 className="text-lg font-bold text-gray-800 text-left">{meal.name}</h2>
+    </div>
+  );
+}
+
+function TableContent(meal: MealData) {
+  const [multipliers, setMultipliers] = useState<Record<number, number>>({});
+
+  const handleMultiplierChange = (id: number, value: number) => {
+    setMultipliers((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const getMultiplier = (id: number) => multipliers[id] || 1;
+
+  return (
+    <div className="w-full overflow-x-auto rounded-2xl shadow gap-4 table-fixed">
+      <table className="min-w-full border-collapse">
+        <thead>
+          <tr className="bg-gray-100 text-left">
+            <th className="px-4 py-2 w-2/8">Product</th>
+            <th className="px-4 py-2 w-2/8">Amount [g]</th>
+            <th className="px-4 py-2 w-1/8">Protein</th>
+            <th className="px-4 py-2 w-1/8">Carbs</th>
+            <th className="px-4 py-2 w-1/8">Fat</th>
+            <th className="px-4 py-2 w-1/8">Kcal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {meal.products.map((product: ProductData) => {
+            const multiplier = getMultiplier(product.id);
+
+            return (
+              <tr
+                key={product.id}
+                className={product.id % 2 === 0 ? "bg-white" : "bg-gray-50"}
+              >
+                <td className="px-4 py-2 font-medium">{product.product}</td>
+                <td className="px-4 py-2 font-medium">
+                  <input
+                    type="number"
+                    value={multiplier}
+                    min={0}
+                    className="w-full border border-gray-300 px-4 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    onChange={(e) =>
+                      handleMultiplierChange(product.id, Number(e.target.value))
+                    }
+                  />
+                </td>
+                <td className="px-4 py-2 font-medium">
+                  {((product.protein * multiplier) / 100).toFixed(1)}
+                </td>
+                <td className="px-4 py-2 font-medium">
+                  {((product.carbohydrates * multiplier) / 100).toFixed(1)}
+                </td>
+                <td className="px-4 py-2 font-medium">
+                  {((product.fat * multiplier) / 100).toFixed(1)}
+                </td>
+                <td className="px-4 py-2 font-medium">
+                  {((product.kcal * multiplier) / 100).toFixed(1)}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default function PlanWeekSection() {
+  const [allMealsFromDb, setAllMealsFromDb] = useState<MealData[]>([]);
+  const [selectedMeals, setSelectedMeals] = useState<Option[]>([]);
+  const [selectOptions, setSelectOptions] = useState<Option[]>([]); // TODO: select options musi słuchać na eventy dodania meal i się aktualizować
+  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+
+  useEffect(() => {
+    const fetchMeals = async () => {
+      const meals = await mealsService.getAll();
+      setAllMealsFromDb(meals);
+      setSelectOptions(
+        meals.map((meal: MealData, i: number) => ({
+          value: meal.id,
+          label: meal.name,
+        })),
+      );
+    };
+    fetchMeals();
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedOption) {
+      setSelectedMeals((prev) => [...prev, selectedOption]);
+      setSelectedOption(null);
+    }
+  };
+
+  return (
+    <>
+      <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-10">
+        {selectedMeals.map((meal: Option, i) => {
+          const mealData = allMealsFromDb.find(
+            (dbMeal: MealData) => dbMeal.name === meal.label,
+          );
+          if (!mealData) {
+            return null;
+          }
+          return (
+            <div key={i} className="flex flex-col gap-4">
+              <TableHeader {...mealData} />
+              <TableContent {...mealData} />
+            </div>
+          );
+        })}
+      </div>
+      <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-2">
+        <div className="grid gap-3 mb-1 md:grid-cols-2">
+          <Select
+            options={selectOptions}
+            onChange={(option: SingleValue<Option>) =>
+              setSelectedOption(option)
+            }
+          />
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Add Meal
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}

@@ -1,5 +1,4 @@
 services:
-
   backend:
     env_file: .env
     build:
@@ -22,7 +21,6 @@ services:
   #   ports:
   #     - "${FRONTEND_PORT}:${FRONTEND_PORT}"
 
-
   frontend:
     env_file: .env
     build:
@@ -32,6 +30,6 @@ services:
       - "5173:5173"
     volumes:
       - ./frontend:/app
-      - /app/node_modules  # keep container's node_modules, not host's
+      - /app/node_modules # keep container's node_modules, not host's
     environment:
-      - CHOKIDAR_USEPOLLING=true  # needed for file change detection in Docker
+      - CHOKIDAR_USEPOLLING=true # needed for file change detection in Docker

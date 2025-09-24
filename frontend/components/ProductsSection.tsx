@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { productService } from '../src/ProductsService'
-
+import { productService } from "../src/ProductsService";
 
 const EMPTY_PRODUCT = {
   name: "",
@@ -9,7 +8,6 @@ const EMPTY_PRODUCT = {
   fat: "",
   kcal: "",
 };
-
 
 // Custom Hook for Products
 function useProducts() {
@@ -249,7 +247,7 @@ function ErrorMessage({ error, onDismiss }) {
   );
 }
 
-export default function ProductsComponent() {
+export default function ProductsSection() {
   const { products, error, fetchProducts, addProduct, deleteProduct } =
     useProducts();
 

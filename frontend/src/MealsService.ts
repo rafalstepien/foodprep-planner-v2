@@ -1,21 +1,20 @@
 const API_BASE_URL = "http://localhost:8000";
 const MEALS_ENDPOINT = `${API_BASE_URL}/meals`;
-const COMMON_HEADERS = { "Content-Type": "application/json" }
+const COMMON_HEADERS = { "Content-Type": "application/json" };
 
 type Meal = {
   name: string;
-}
+};
 
 type MealToDeleteProductsFrom = {
   meal_id: number;
   product_ids: number[];
-}
+};
 
 type AddProductToMealSchema = {
   mealId: number;
   productId: number;
-}
-
+};
 
 export const mealsService = {
   async getAll() {
@@ -49,12 +48,14 @@ export const mealsService = {
   },
 
   async addProductToMeal(newMeal: AddProductToMealSchema) {
-    var mealJson = JSON.stringify({ meals: [{
-      meal_id: newMeal.mealId,
-      products: [newMeal.productId],
-    }] })
-    console.log("-------")
-    console.log(mealJson)
+    var mealJson = JSON.stringify({
+      meals: [
+        {
+          meal_id: newMeal.mealId,
+          products: [newMeal.productId],
+        },
+      ],
+    });
     const response = await fetch(MEALS_ENDPOINT, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },

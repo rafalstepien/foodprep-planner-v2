@@ -1,34 +1,226 @@
 [
-  { "name": "Bułka grahamka", "protein": 9.60, "carbohydrates": 49.40, "fat": 1.70, "kcal": 262.00 },
-  { "name": "Jabłko (bez skórki i gniazda, wartosci dla 100g)", "protein": 0.30, "carbohydrates": 13.50, "fat": 0.20, "kcal": 50.00 },
-  { "name": "Jajko (bez skorupki wartosci dla 100g)", "protein": 12.50, "carbohydrates": 0.70, "fat": 10.50, "kcal": 143.00 },
-  { "name": "Kefir krasnystaw", "protein": 3.40, "carbohydrates": 4.70, "fat": 2.00, "kcal": 50.00 },
-  { "name": "Majonez lekki (Lidl)", "protein": 1.10, "carbohydrates": 8.40, "fat": 33.20, "kcal": 338.00 },
-  { "name": "Majonez wege (Biedronka)", "protein": 0.00, "carbohydrates": 9.20, "fat": 30.00, "kcal": 312.00 },
-  { "name": "Mąka luksusowa", "protein": 12.00, "carbohydrates": 71.00, "fat": 1.30, "kcal": 347.00 },
-  { "name": "Makaron", "protein": 14.50, "carbohydrates": 71.00, "fat": 1.50, "kcal": 363.00 },
-  { "name": "Makaron soba", "protein": 12.00, "carbohydrates": 69.60, "fat": 1.40, "kcal": 346.00 },
-  { "name": "Mleczko kokosowe", "protein": 1.50, "carbohydrates": 1.90, "fat": 18.00, "kcal": 177.00 },
-  { "name": "Mleczko kokosowe light", "protein": 1.10, "carbohydrates": 1.40, "fat": 13.00, "kcal": 128.00 },
-  { "name": "Mozzarella", "protein": 17.00, "carbohydrates": 2.00, "fat": 18.00, "kcal": 238.00 },
-  { "name": "Mozzarella light", "protein": 19.00, "carbohydrates": 2.00, "fat": 9.00, "kcal": 165.00 },
-  { "name": "Olej", "protein": 0.00, "carbohydrates": 0.00, "fat": 100.00, "kcal": 884.00 },
-  { "name": "Oliwa z oliwek", "protein": 0.00, "carbohydrates": 0.00, "fat": 100.00, "kcal": 884.00 },
-  { "name": "Pasta Tom Kha (Lidl)", "protein": 1.80, "carbohydrates": 33.00, "fat": 10.00, "kcal": 243.00 },
-  { "name": "Pierś z kurczaka", "protein": 22.00, "carbohydrates": 0.00, "fat": 1.00, "kcal": 100.00 },
-  { "name": "Pomidory suszone", "protein": 3.00, "carbohydrates": 32.00, "fat": 0.00, "kcal": 169.00 },
-  { "name": "Pomidory suszone w oleju", "protein": 5.00, "carbohydrates": 23.00, "fat": 12.00, "kcal": 220.00 },
-  { "name": "Sos rybny", "protein": 8.00, "carbohydrates": 7.00, "fat": 0.00, "kcal": 60.00 },
-  { "name": "Szynka", "protein": 24.00, "carbohydrates": 0.00, "fat": 1.00, "kcal": 103.00 },
-  { "name": "Skyr waniliowy", "protein": 9.60, "carbohydrates": 11.00, "fat": 0.00, "kcal": 82.00 },
-  { "name": "Białko WPC (SFD)", "protein": 70.00, "carbohydrates": 16.00, "fat": 6.50, "kcal": 403.00 },
-  { "name": "Płatki owsiane błyskawiczne", "protein": 14.00, "carbohydrates": 55.00, "fat": 7.00, "kcal": 364.00 },
-  { "name": "Mrożone maliny", "protein": 1.00, "carbohydrates": 7.00, "fat": 0.00, "kcal": 42.00 },
-  { "name": "Orzechy włoskie", "protein": 16.00, "carbohydrates": 18.00, "fat": 60.00, "kcal": 640.00 },
-  { "name": "Pomidor", "protein": 1.00, "carbohydrates": 3.00, "fat": 0.00, "kcal": 19.00 },
-  { "name": "Imbir (korzeń)", "protein": 2.00, "carbohydrates": 18.00, "fat": 0.70, "kcal": 80.00 },
-  { "name": "Rukola", "protein": 2.50, "carbohydrates": 4.00, "fat": 0.00, "kcal": 25.00 },
-  { "name": "Jogurt naturalny", "protein": 6.00, "carbohydrates": 5.00, "fat": 3.00, "kcal": 70.00 },
-  { "name": "Rodzynki sułtańskie", "protein": 3.00, "carbohydrates": 69.00, "fat": 0.00, "kcal": 300.00 },
-  { "name": "Czerwona cebula", "protein": 1.00, "carbohydrates": 6.00, "fat": 0.00, "kcal": 35.00 }
+  {
+    "name": "Bułka grahamka",
+    "protein": 9.6,
+    "carbohydrates": 49.4,
+    "fat": 1.7,
+    "kcal": 262.0
+  },
+  {
+    "name": "Jabłko (bez skórki i gniazda, wartosci dla 100g)",
+    "protein": 0.3,
+    "carbohydrates": 13.5,
+    "fat": 0.2,
+    "kcal": 50.0
+  },
+  {
+    "name": "Jajko (bez skorupki wartosci dla 100g)",
+    "protein": 12.5,
+    "carbohydrates": 0.7,
+    "fat": 10.5,
+    "kcal": 143.0
+  },
+  {
+    "name": "Kefir krasnystaw",
+    "protein": 3.4,
+    "carbohydrates": 4.7,
+    "fat": 2.0,
+    "kcal": 50.0
+  },
+  {
+    "name": "Majonez lekki (Lidl)",
+    "protein": 1.1,
+    "carbohydrates": 8.4,
+    "fat": 33.2,
+    "kcal": 338.0
+  },
+  {
+    "name": "Majonez wege (Biedronka)",
+    "protein": 0.0,
+    "carbohydrates": 9.2,
+    "fat": 30.0,
+    "kcal": 312.0
+  },
+  {
+    "name": "Mąka luksusowa",
+    "protein": 12.0,
+    "carbohydrates": 71.0,
+    "fat": 1.3,
+    "kcal": 347.0
+  },
+  {
+    "name": "Makaron",
+    "protein": 14.5,
+    "carbohydrates": 71.0,
+    "fat": 1.5,
+    "kcal": 363.0
+  },
+  {
+    "name": "Makaron soba",
+    "protein": 12.0,
+    "carbohydrates": 69.6,
+    "fat": 1.4,
+    "kcal": 346.0
+  },
+  {
+    "name": "Mleczko kokosowe",
+    "protein": 1.5,
+    "carbohydrates": 1.9,
+    "fat": 18.0,
+    "kcal": 177.0
+  },
+  {
+    "name": "Mleczko kokosowe light",
+    "protein": 1.1,
+    "carbohydrates": 1.4,
+    "fat": 13.0,
+    "kcal": 128.0
+  },
+  {
+    "name": "Mozzarella",
+    "protein": 17.0,
+    "carbohydrates": 2.0,
+    "fat": 18.0,
+    "kcal": 238.0
+  },
+  {
+    "name": "Mozzarella light",
+    "protein": 19.0,
+    "carbohydrates": 2.0,
+    "fat": 9.0,
+    "kcal": 165.0
+  },
+  {
+    "name": "Olej",
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "fat": 100.0,
+    "kcal": 884.0
+  },
+  {
+    "name": "Oliwa z oliwek",
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "fat": 100.0,
+    "kcal": 884.0
+  },
+  {
+    "name": "Pasta Tom Kha (Lidl)",
+    "protein": 1.8,
+    "carbohydrates": 33.0,
+    "fat": 10.0,
+    "kcal": 243.0
+  },
+  {
+    "name": "Pierś z kurczaka",
+    "protein": 22.0,
+    "carbohydrates": 0.0,
+    "fat": 1.0,
+    "kcal": 100.0
+  },
+  {
+    "name": "Pomidory suszone",
+    "protein": 3.0,
+    "carbohydrates": 32.0,
+    "fat": 0.0,
+    "kcal": 169.0
+  },
+  {
+    "name": "Pomidory suszone w oleju",
+    "protein": 5.0,
+    "carbohydrates": 23.0,
+    "fat": 12.0,
+    "kcal": 220.0
+  },
+  {
+    "name": "Sos rybny",
+    "protein": 8.0,
+    "carbohydrates": 7.0,
+    "fat": 0.0,
+    "kcal": 60.0
+  },
+  {
+    "name": "Szynka",
+    "protein": 24.0,
+    "carbohydrates": 0.0,
+    "fat": 1.0,
+    "kcal": 103.0
+  },
+  {
+    "name": "Skyr waniliowy",
+    "protein": 9.6,
+    "carbohydrates": 11.0,
+    "fat": 0.0,
+    "kcal": 82.0
+  },
+  {
+    "name": "Białko WPC (SFD)",
+    "protein": 70.0,
+    "carbohydrates": 16.0,
+    "fat": 6.5,
+    "kcal": 403.0
+  },
+  {
+    "name": "Płatki owsiane błyskawiczne",
+    "protein": 14.0,
+    "carbohydrates": 55.0,
+    "fat": 7.0,
+    "kcal": 364.0
+  },
+  {
+    "name": "Mrożone maliny",
+    "protein": 1.0,
+    "carbohydrates": 7.0,
+    "fat": 0.0,
+    "kcal": 42.0
+  },
+  {
+    "name": "Orzechy włoskie",
+    "protein": 16.0,
+    "carbohydrates": 18.0,
+    "fat": 60.0,
+    "kcal": 640.0
+  },
+  {
+    "name": "Pomidor",
+    "protein": 1.0,
+    "carbohydrates": 3.0,
+    "fat": 0.0,
+    "kcal": 19.0
+  },
+  {
+    "name": "Imbir (korzeń)",
+    "protein": 2.0,
+    "carbohydrates": 18.0,
+    "fat": 0.7,
+    "kcal": 80.0
+  },
+  {
+    "name": "Rukola",
+    "protein": 2.5,
+    "carbohydrates": 4.0,
+    "fat": 0.0,
+    "kcal": 25.0
+  },
+  {
+    "name": "Jogurt naturalny",
+    "protein": 6.0,
+    "carbohydrates": 5.0,
+    "fat": 3.0,
+    "kcal": 70.0
+  },
+  {
+    "name": "Rodzynki sułtańskie",
+    "protein": 3.0,
+    "carbohydrates": 69.0,
+    "fat": 0.0,
+    "kcal": 300.0
+  },
+  {
+    "name": "Czerwona cebula",
+    "protein": 1.0,
+    "carbohydrates": 6.0,
+    "fat": 0.0,
+    "kcal": 35.0
+  }
 ]

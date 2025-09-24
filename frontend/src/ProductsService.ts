@@ -7,7 +7,7 @@ type Product = {
   carbohydrates: number;
   fat: number;
   kcal: number;
-}
+};
 
 type ReturnProduct = {
   id: number;
@@ -16,10 +16,9 @@ type ReturnProduct = {
   carbohydrates: number;
   fat: number;
   kcal: number;
-}
+};
 
-
-const BASE_HEADERS = { "Content-Type": "application/json" }
+const BASE_HEADERS = { "Content-Type": "application/json" };
 
 export const productService = {
   async getAll(): Promise<ReturnProduct[]> {
@@ -45,7 +44,7 @@ export const productService = {
     const response = await fetch(PRODUCTS_ENDPOINT, {
       method: "DELETE",
       headers: BASE_HEADERS,
-      body: JSON.stringify({ ids: [productId] }),  // TODO: instead of passing it in body, pass in url
+      body: JSON.stringify({ ids: [productId] }), // TODO: instead of passing it in body, pass in url
     });
     if (!response.ok) {
       throw new Error(`Failed to delete product: ${response.status}`);
