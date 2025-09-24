@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-import { mealsService } from "../src/MealsService.js";
+import { mealsService } from "../src/services/MealsService.js";
 import { MealData } from "./MealDataTable.js";
 
 type Meal = {
@@ -99,7 +99,7 @@ function useMeals() {
   };
 }
 
-function AddMealForm({ onSubmit }) {
+function CreateMealForm({ onSubmit }) {
   const EMPTY_MEAL = {
     name: "",
     products: [],
@@ -156,22 +156,37 @@ function AddMealForm({ onSubmit }) {
   );
 }
 
-function ErrorMessage({ error, onDismiss }) {
+function ErrorMessage({ error }) {
   if (!error) return null;
 
   return (
     <div className="w-6/12 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
       <div className="flex justify-between items-center">
         <span>{error}</span>
-        <button
-          onClick={onDismiss}
-          className="text-red-500 hover:text-red-700 ml-4"
-        >
-          ✕
-        </button>
+        <button className="text-red-500 hover:text-red-700 ml-4">✕</button>
       </div>
     </div>
   );
+}
+
+type MealsListProps = {
+  meals: Meal[];
+  deleteProductFromMeal: (mealId: number, productId: number) => void;
+  deleteMeal: (mealId: number) => void;
+  addProductToMeal: (mealData: AddProductToMealSchema) => void;
+};
+
+function MealsList(props: MealsListProps) {
+  return props.meals.map((meal: Meal, i: number) => (
+    <div key={i} className="w-full flex flex-col gap-2 mt-10">
+      <MealData
+        meal={meal}
+        deleteProductFromMeal={props.deleteProductFromMeal}
+        deleteMeal={props.deleteMeal}
+        addProductToMeal={props.addProductToMeal}
+      />
+    </div>
+  ));
 }
 
 export default function MealsSection() {
@@ -189,30 +204,22 @@ export default function MealsSection() {
     fetchMeals();
   }, [fetchMeals]);
 
-  const handleDismissError = () => {
-    // In a real app, you'd have error state management here
-  };
-
   return (
-    <>
-      <ErrorMessage error={error} onDismiss={handleDismissError} />
-      <>
+    <div className="flex flex-col gap-30">
+      <ErrorMessage error={error} />
+      <div>
         {meals.length == 0 ? (
           <div>Add your first meal</div>
         ) : (
-          meals.map((meal: Meal, i: number) => (
-            <div key={i} className="w-full flex flex-col gap-4">
-              <MealData
-                meal={meal}
-                deleteProductFromMeal={deleteProductFromMeal}
-                deleteMeal={deleteMeal}
-                addProductToMeal={addProductToMeal}
-              />
-            </div>
-          ))
+          <MealsList
+            meals={meals}
+            deleteProductFromMeal={deleteProductFromMeal}
+            deleteMeal={deleteMeal}
+            addProductToMeal={addProductToMeal}
+          />
         )}
-        <AddMealForm onSubmit={addNewMeal} />
-      </>
-    </>
+      </div>
+      <CreateMealForm onSubmit={addNewMeal} />
+    </div>
   );
 }

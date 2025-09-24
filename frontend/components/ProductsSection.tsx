@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { productService } from "../src/ProductsService";
+import { productService } from "../src/services/ProductsService";
 
 const EMPTY_PRODUCT = {
   name: "",
@@ -260,10 +260,10 @@ export default function ProductsSection() {
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-10 mt-10">
       <ErrorMessage error={error} onDismiss={handleDismissError} />
       <ProductsTable products={products} onDelete={deleteProduct} />
       <ProductForm onSubmit={addProduct} />
-    </>
+    </div>
   );
 }

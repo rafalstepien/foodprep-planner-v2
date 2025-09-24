@@ -1,9 +1,6 @@
 import Select, { SingleValue } from "react-select";
 import { useState, useEffect } from "react";
-import { mealsService } from "../src/MealsService.ts";
-
-const API_BASE_URL = "http://localhost:8000";
-const MEALS_ENDPOINT = `${API_BASE_URL}/meals`;
+import { mealsService } from "../src/services/MealsService.ts";
 
 interface Option {
   value: number;
@@ -97,6 +94,51 @@ function TableContent(meal: MealData) {
   );
 }
 
+type AddMealComponentProps = {
+  selectOptions: Option[];
+  setSelectedOption: (option: SingleValue<Option>) => void;
+  addMeal: (e: React.FormEvent) => void;
+};
+
+function AddMealComponent(props: AddMealComponentProps) {
+  return (
+    <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-2">
+      <div className="grid gap-3 mb-1 md:grid-cols-2">
+        <Select
+          options={props.selectOptions}
+          onChange={(option: SingleValue<Option>) =>
+            props.setSelectedOption(option)
+          }
+        />
+        <button
+          type="submit"
+          onClick={props.addMeal}
+          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Add Meal
+        </button>
+      </div>
+    </div>
+  );
+}
+
+type MealAdjustmentTableProps = {
+  i: number;
+  mealData: MealData;
+};
+
+function MealAdjustmentTable(props: MealAdjustmentTableProps) {
+  return (
+    <div
+      key={props.i}
+      className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-10"
+    >
+      <TableHeader {...props.mealData} />
+      <TableContent {...props.mealData} />
+    </div>
+  );
+}
+
 export default function PlanWeekSection() {
   const [allMealsFromDb, setAllMealsFromDb] = useState<MealData[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<Option[]>([]);
@@ -108,7 +150,7 @@ export default function PlanWeekSection() {
       const meals = await mealsService.getAll();
       setAllMealsFromDb(meals);
       setSelectOptions(
-        meals.map((meal: MealData, i: number) => ({
+        meals.map((meal: MealData) => ({
           value: meal.id,
           label: meal.name,
         })),
@@ -117,7 +159,7 @@ export default function PlanWeekSection() {
     fetchMeals();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const addMeal = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedOption) {
       setSelectedMeals((prev) => [...prev, selectedOption]);
@@ -126,40 +168,22 @@ export default function PlanWeekSection() {
   };
 
   return (
-    <>
-      <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-10">
-        {selectedMeals.map((meal: Option, i) => {
-          const mealData = allMealsFromDb.find(
-            (dbMeal: MealData) => dbMeal.name === meal.label,
-          );
-          if (!mealData) {
-            return null;
-          }
-          return (
-            <div key={i} className="flex flex-col gap-4">
-              <TableHeader {...mealData} />
-              <TableContent {...mealData} />
-            </div>
-          );
-        })}
-      </div>
-      <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-2">
-        <div className="grid gap-3 mb-1 md:grid-cols-2">
-          <Select
-            options={selectOptions}
-            onChange={(option: SingleValue<Option>) =>
-              setSelectedOption(option)
-            }
-          />
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Add Meal
-          </button>
-        </div>
-      </div>
-    </>
+    <div className="flex flex-col gap-10 mt-10">
+      {selectedMeals.map((meal: Option, i) => {
+        const mealData = allMealsFromDb.find(
+          (dbMeal: MealData) => dbMeal.name === meal.label,
+        );
+        if (!mealData) {
+          return null;
+        }
+        return <MealAdjustmentTable mealData={mealData} i={i} />;
+      })}
+
+      <AddMealComponent
+        selectOptions={selectOptions}
+        setSelectedOption={setSelectedOption}
+        addMeal={addMeal}
+      />
+    </div>
   );
 }

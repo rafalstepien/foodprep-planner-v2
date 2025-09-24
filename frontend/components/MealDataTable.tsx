@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Select, { SingleValue } from "react-select";
-import { productService } from "../src/ProductsService.js";
+import { productService } from "../src/services/ProductsService.js";
 
 type DeleteProductFromMealButtonProps = {
   mealId: number;
