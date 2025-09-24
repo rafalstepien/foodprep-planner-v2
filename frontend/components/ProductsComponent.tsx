@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
+import { productService } from '../src/ProductsService'
 
-// TODO: move to env file
-const API_BASE_URL = "http://localhost:8000";
-const PRODUCTS_ENDPOINT = `${API_BASE_URL}/products`;
 
 const EMPTY_PRODUCT = {
   name: "",
@@ -12,37 +10,6 @@ const EMPTY_PRODUCT = {
   kcal: "",
 };
 
-const productService = {
-  async getAll() {
-    const response = await fetch(PRODUCTS_ENDPOINT);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.status}`);
-    }
-    return response.json(); // TODO: handle sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: products.product
-  },
-
-  async create(product) {
-    const response = await fetch(PRODUCTS_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ products: [product] }),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to create product: ${response.status}`);
-    }
-  },
-
-  async delete(productId) {
-    const response = await fetch(PRODUCTS_ENDPOINT, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: [productId] }),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to delete product: ${response.status}`);
-    }
-  },
-};
 
 // Custom Hook for Products
 function useProducts() {

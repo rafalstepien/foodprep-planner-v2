@@ -32,14 +32,9 @@ class MealsToDelete(BaseModel):
 # ------------------------------------------------------------------
 # --------------- OPERATIONS ON PRODUCTS UNDER MEALS ---------------
 
-class ProductWithAmount(BaseModel):
-    product_id: int
-    product_amount: int
-
-
 class AddProductsToMealData(BaseModel):
     meal_id: int
-    products: list[ProductWithAmount]
+    products: list[int]
     
 
 class InputMealProducts(BaseModel):

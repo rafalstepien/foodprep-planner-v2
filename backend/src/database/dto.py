@@ -10,13 +10,6 @@ class ProductDto:
     kcal: float
 
 
-
-@dataclass(frozen=True)
-class MealProductDto:
-    product_id: int
-    product_amount: int
-
-
 @dataclass(frozen=True)
 class EmptyMealDto:
     name: str
@@ -25,7 +18,7 @@ class EmptyMealDto:
 @dataclass(frozen=True)
 class AddProductsToMealDto:
     meal_id: int
-    products: list[MealProductDto]
+    products: list[int]
 
 
 @dataclass(frozen=True)

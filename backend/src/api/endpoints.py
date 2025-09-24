@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Response, status
 
 from .models import MealsToDelete, InputMeals, InputProducts, MealsToDelete, ProductsToDelete, OutputProduct, OutputMeal, InputMealProducts, InputMealsProductsToDelete
 from ..containers import Container
-from ..database import DatabaseClient, EmptyMealDto, ProductDto, MealProductDto, AddProductsToMealDto, MealProductsToDelete
+from ..database import DatabaseClient, EmptyMealDto, ProductDto, AddProductsToMealDto, MealProductsToDelete
 
 router = APIRouter()
 
@@ -103,13 +103,7 @@ async def add_product_to_meal(
     products_per_meal_dto_array = [
         AddProductsToMealDto(
             meal_id=meal.meal_id,
-            products=[
-                MealProductDto(
-                    product_id=p.product_id,
-                    product_amount=p.product_amount,
-                )
-                for p in meal.products
-            ],
+            products=[product_id for product_id in meal.products],
         )
         for meal in meal_products.meals
     ]

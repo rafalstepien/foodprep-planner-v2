@@ -86,8 +86,7 @@ class DatabaseClient:
                 .first()
                 
             new_products = [
-                DatabaseMealProducts(product_id=p.product_id, amount=p.product_amount)
-                for p in request_meal.products  # TODO: handle case when some product don't exist
+                DatabaseMealProducts(product_id=p_id) for p_id in request_meal.products  # TODO: handle case when some product don't exist
             ]
             db_meal.meal_products += new_products
             self.session.merge(db_meal)

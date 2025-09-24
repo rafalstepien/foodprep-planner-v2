@@ -48,7 +48,6 @@ class MealProducts(Base):
     
     meal_id = Column(Integer, ForeignKey("meals.id"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
-    amount = Column(Integer, nullable=False)
     
     meals = relationship("Meals", back_populates="meal_products")
     products = relationship("Products", back_populates="meal_products")
@@ -56,7 +55,6 @@ class MealProducts(Base):
     def as_dict(self) -> dict:
         return {
             "product_id": self.product_id,
-            "amount": self.amount,
         }
     
     

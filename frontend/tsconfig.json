@@ -1,5 +1,13 @@
 {
   "files": [],
+  "compilerOptions": {
+    "jsx": "react-jsx",  // for React 17+
+    "allowJs": true,     // so you can still have .js files
+    "checkJs": false,
+    "strict": true,      // catch more bugs
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }

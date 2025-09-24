@@ -1,54 +1,34 @@
 import { useState, useEffect, useCallback } from "react";
+import Select, {SingleValue} from 'react-select';
+import { productService } from '../src/ProductsService.js'
+import { mealsService } from '../src/MealsService.js'
 
-// TODO: move to env file
-const API_BASE_URL = "http://localhost:8000";
-const MEALS_ENDPOINT = `${API_BASE_URL}/meals`;
 
-const mealsService = {
-  async getAll() {
-    const response = await fetch(MEALS_ENDPOINT);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch meals: ${response.status}`);
-    }
-    return response.json(); // TODO: handle sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: products.product
-  },
+type DeleteProductFromMealButtonProps = {
+  mealId: number;
+  productId: number;
+  onDelete: (mealId: number, productId: number) => void;
+}
 
-  async createNewMeal(newMeal) {
-    const response = await fetch(MEALS_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ meals: [newMeal] }),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to create meal: ${response.status}`);
-    }
-  },
+type DeleteMealButtonProps = {
+  mealId: number;
+  onDelete: (mealId: number) => void;
+}
 
-  async deleteProductFromMeal(meal) {
-    const response = await fetch(`${API_BASE_URL}/meals_products`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ meals: [meal] }),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to delete meal: ${response.status}`);
-    }
-  },
 
-  async deleteMeal(mealId) {
-    const response = await fetch(`${API_BASE_URL}/meals`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: [mealId] }),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to delete meal: ${response.status}`);
-    }
-  },
-};
+type Meal = {
+  id: number
+  name: string
+  products: []
+}
+
+type AddProductToMealSchema = {
+  mealId: number;
+  productId: number;
+}
 
 function useMeals() {
-  const [meals, setMeals] = useState([]);
+  const [meals, setMeals] = useState<Meal[]>([]);
   const [error, setError] = useState(null);
 
   const fetchMeals = useCallback(async () => {
@@ -80,7 +60,7 @@ function useMeals() {
   );
 
   const deleteProductFromMeal = useCallback(
-    async (mealId, productId) => {
+    async (mealId: number, productId: number) => {
       setError(null);
       try {
         await mealsService.deleteProductFromMeal({
@@ -96,7 +76,7 @@ function useMeals() {
   );
 
   const deleteMeal = useCallback(
-    async (mealId) => {
+    async (mealId: number) => {
       setError(null);
       try {
         await mealsService.deleteMeal(mealId);
@@ -108,6 +88,21 @@ function useMeals() {
     [fetchMeals],
   );
 
+  const addProductToMeal = useCallback(
+    async (mealData: AddProductToMealSchema) => {
+      console.log("Inside onSubmit")
+      console.log("mealData", mealData)
+      setError(null);
+      try {
+        await mealsService.addProductToMeal(mealData);
+      } catch (err) {
+        setError(err.message);
+      }
+      await fetchMeals();
+    },
+    [fetchMeals],
+  )
+
   return {
     meals,
     error,
@@ -115,10 +110,11 @@ function useMeals() {
     fetchMeals,
     deleteProductFromMeal,
     deleteMeal,
+    addProductToMeal,
   };
 }
 
-function DeleteProductFromMealButton({ mealId, productId, onDelete }) {
+function DeleteProductFromMealButton({ mealId, productId, onDelete }: DeleteProductFromMealButtonProps) {
   return (
     <button
       type="button"
@@ -130,7 +126,7 @@ function DeleteProductFromMealButton({ mealId, productId, onDelete }) {
   );
 }
 
-function DeleteMealButton({ mealId, onDelete }) {
+function DeleteMealButton({ mealId, onDelete }: DeleteMealButtonProps) {
   return (
     <button
       type="button"
@@ -200,7 +196,7 @@ function AddMealForm({ onSubmit }) {
   const [meal, setMeal] = useState(EMPTY_MEAL);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -267,32 +263,101 @@ function ErrorMessage({ error, onDismiss }) {
   );
 }
 
+
+interface Option {
+  value: number;
+  label: string;
+}
+
+
+type AddProductToMealFormProps = {
+  meal: Meal;
+  onSubmit: (data: { mealId: number; productId: number }) => Promise<void>;
+}
+
+function AddProductToMealForm({ meal, onSubmit }: AddProductToMealFormProps) {
+  const [selectOptions, setSelectOptions] = useState<Option[]>([]);
+  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+
+  useEffect(() => {
+    async function fetchOptions() {
+      try {
+        const products = await productService.getAll();
+        setSelectOptions(
+          products.map(
+            (p: { id: number; product: string }) => ({
+              value: p.id,
+              label: p.product,
+            })
+          )
+        );
+      } catch (err) {
+        console.error("Failed to load products", err);
+      }
+    }
+    fetchOptions();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedOption) {
+      console.log("------------------------")
+      console.log({mealId: meal.id, productId: selectedOption.value})
+      try {
+        await onSubmit({mealId: meal.id, productId: selectedOption.value});
+      } catch (error) {
+        // handled by parent
+      }
+    }
+  };
+
+  return (
+    <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4">
+      <h2 className="text-lg font-bold text-gray-800">Add Product</h2>
+      <div className="grid gap-3 mb-1 md:grid-cols-2">
+        <Select options={selectOptions} onChange={(option: SingleValue<Option>) => setSelectedOption(option)}/>
+        <button
+          type="submit"
+          onClick={handleSubmit}
+          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Add Product
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
 function MealTablesAndForm({
   meals,
   addNewMeal,
   deleteProductFromMeal,
   deleteMeal,
+  addProductToMeal,
 }) {
   return (
     <>
       {meals.length == 0 ? (
         <div>Add your first meal</div>
       ) : (
-        meals.map((meal, i) => (
-          <MealTable
-            meal={meal}
-            deleteProductFromMeal={deleteProductFromMeal}
-            deleteMeal={deleteMeal}
-          />
+        meals.map((meal: Meal, i: number) => (
+          <div key={i}>
+            <MealTable
+              meal={meal}
+              deleteProductFromMeal={deleteProductFromMeal}
+              deleteMeal={deleteMeal}
+            />
+            <AddProductToMealForm 
+              meal={meal} 
+              onSubmit={addProductToMeal}
+            />
+          </div>
         ))
       )}
       <AddMealForm onSubmit={addNewMeal} />
     </>
   );
-}
-
-function AddProductToMealForm () {
-  
 }
 
 export default function MealsComponent() {
@@ -303,6 +368,7 @@ export default function MealsComponent() {
     fetchMeals,
     deleteProductFromMeal,
     deleteMeal,
+    addProductToMeal,
   } = useMeals();
 
   useEffect(() => {
@@ -321,6 +387,7 @@ export default function MealsComponent() {
         addNewMeal={addNewMeal}
         deleteProductFromMeal={deleteProductFromMeal}
         deleteMeal={deleteMeal}
+        addProductToMeal={addProductToMeal}
       />
     </>
   );
