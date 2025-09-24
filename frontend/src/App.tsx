@@ -1,8 +1,9 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "../components/Navbar.tsx";
 import ProductsSection from "../components/ProductsSection.tsx";
 import MealsSection from "../components/MealsSection.tsx";
-import PlanWeekSection from "../components/PlanWeekSection.tsx";
+import PlanSection from "../components/PlanSection.tsx";
+
 
 export default function App() {
   return (
@@ -13,7 +14,7 @@ export default function App() {
           <Route path="/" element={<ProductsSection />} />
           <Route path="/products" element={<ProductsSection />} />
           <Route path="/meals" element={<MealsSection />} />
-          <Route path="/plan" element={<PlanWeekSection />} />
+          <Route path="/plan" element={<PlanSection />} />
         </Routes>
       </div>
     </>

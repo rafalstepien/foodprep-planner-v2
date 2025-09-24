@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import Select, { SingleValue } from "react-select";
 import { productService } from "../src/services/ProductsService.js";
 
+
+const buttonClassName = "focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
+
+
 type DeleteProductFromMealButtonProps = {
   mealId: number;
   productId: number;
@@ -15,9 +19,9 @@ function DeleteProductFromMealButton(props: DeleteProductFromMealButtonProps) {
       onClick={() =>
         props.callDeleteProductFromMeal(props.mealId, props.productId)
       }
-      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
+      className={buttonClassName}
     >
-      Delete
+      -
     </button>
   );
 }
@@ -32,9 +36,9 @@ function DeleteMealButton(props: DeleteMealButtonProps) {
     <button
       type="button"
       onClick={() => props.callDeleteMeal(props.mealId)}
-      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
+      className={buttonClassName}
     >
-      Delete
+      -
     </button>
   );
 }
@@ -121,13 +125,13 @@ type TableHeaderProps = {
 function TableHeader(props: TableHeaderProps) {
   return (
     <div className="w-full items-left flex flex-row gap-4">
-      <h2 className="text-lg font-bold text-gray-800 text-left">
-        {props.meal.name}
-      </h2>
       <DeleteMealButton
         mealId={props.meal.id}
         callDeleteMeal={props.deleteMeal}
       />
+      <h2 className="text-lg font-bold text-gray-800 text-left">
+        {props.meal.name}
+      </h2>
     </div>
   );
 }
@@ -149,11 +153,11 @@ type Product = {
 function TableContent(props: TableContentProps) {
   return (
     <div className="w-full overflow-x-auto rounded-2xl shadow gap-4 table-fixed">
-      <table className="min-w-full border-collapse">
+      <table className="min-w-full border-collapse table-auto table-fixed">
         <thead>
           <tr className="bg-gray-100 text-left">
-            <th className="px-4 py-2 w-3/4">Product</th>
-            <th className="px-4 py-2 w-1/4">Actions</th>
+            <th className="px-4 py-2 w-1/16"></th>
+            <th className="px-4 py-2 w-15/16"></th>
           </tr>
         </thead>
         <tbody>
@@ -163,14 +167,14 @@ function TableContent(props: TableContentProps) {
                 key={product.id}
                 className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}
               >
-                <td className="px-4 py-2 font-medium">{product.product}</td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 flex justify-center">
                   <DeleteProductFromMealButton
                     productId={product.id}
                     mealId={props.meal.id}
                     callDeleteProductFromMeal={props.deleteProductFromMeal}
                   />
                 </td>
+                <td className="px-4 py-2 font-medium">{product.product}</td>
               </tr>
             );
           })}

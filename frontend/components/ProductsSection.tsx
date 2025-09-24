@@ -260,7 +260,7 @@ export default function ProductsSection() {
   };
 
   return (
-    <div className="flex flex-col gap-10 mt-10">
+    <div className="flex flex-col gap-10 mt-10 mb-20">
       <ErrorMessage error={error} onDismiss={handleDismissError} />
       <ProductsTable products={products} onDelete={deleteProduct} />
       <ProductForm onSubmit={addProduct} />

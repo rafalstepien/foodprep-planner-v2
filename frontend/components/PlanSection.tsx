@@ -139,7 +139,7 @@ function MealAdjustmentTable(props: MealAdjustmentTableProps) {
   );
 }
 
-export default function PlanWeekSection() {
+export default function PlanSection() {
   const [allMealsFromDb, setAllMealsFromDb] = useState<MealData[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<Option[]>([]);
   const [selectOptions, setSelectOptions] = useState<Option[]>([]); // TODO: select options musi słuchać na eventy dodania meal i się aktualizować

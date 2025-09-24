@@ -130,7 +130,7 @@ function CreateMealForm({ onSubmit }) {
     "w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent";
 
   return (
-    <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4">
+    <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4 mb-20">
       <h2 className="text-lg font-bold text-gray-800">Create Meal</h2>
       <div className="grid gap-3 mb-1 md:grid-cols-2">
         <input
@@ -208,16 +208,12 @@ export default function MealsSection() {
     <div className="flex flex-col gap-30">
       <ErrorMessage error={error} />
       <div>
-        {meals.length == 0 ? (
-          <div>Add your first meal</div>
-        ) : (
-          <MealsList
+         <MealsList
             meals={meals}
             deleteProductFromMeal={deleteProductFromMeal}
             deleteMeal={deleteMeal}
             addProductToMeal={addProductToMeal}
           />
-        )}
       </div>
       <CreateMealForm onSubmit={addNewMeal} />
     </div>
