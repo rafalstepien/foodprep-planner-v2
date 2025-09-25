@@ -1,6 +1,8 @@
-import Select, { SingleValue } from "react-select";
 import { useState, useEffect } from "react";
 import { mealsService } from "../src/services/MealsService.ts";
+import AddMealInput from "./Plan/AddMealInput.tsx";
+import WeekSetup from "./Plan/WeekSetup.tsx";
+import SelectedMeals from "./Plan/SelectedMeals.tsx";
 
 interface Option {
   value: number;
@@ -22,124 +24,38 @@ type MealData = {
   products: ProductData[];
 };
 
-function TableHeader(meal: MealData) {
-  return (
-    <div className="w-full items-left flex flex-row gap-4">
-      <h2 className="text-lg font-bold text-gray-800 text-left">{meal.name}</h2>
-    </div>
-  );
-}
-
-function TableContent(meal: MealData) {
-  const [multipliers, setMultipliers] = useState<Record<number, number>>({});
-
-  const handleMultiplierChange = (id: number, value: number) => {
-    setMultipliers((prev) => ({ ...prev, [id]: value }));
-  };
-
-  const getMultiplier = (id: number) => multipliers[id] || 1;
-
-  return (
-    <div className="w-full overflow-x-auto rounded-2xl shadow gap-4 table-fixed">
-      <table className="min-w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="px-4 py-2 w-2/8">Product</th>
-            <th className="px-4 py-2 w-2/8">Amount [g]</th>
-            <th className="px-4 py-2 w-1/8">Protein</th>
-            <th className="px-4 py-2 w-1/8">Carbs</th>
-            <th className="px-4 py-2 w-1/8">Fat</th>
-            <th className="px-4 py-2 w-1/8">Kcal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {meal.products.map((product: ProductData) => {
-            const multiplier = getMultiplier(product.id);
-
-            return (
-              <tr
-                key={product.id}
-                className={product.id % 2 === 0 ? "bg-white" : "bg-gray-50"}
-              >
-                <td className="px-4 py-2 font-medium">{product.product}</td>
-                <td className="px-4 py-2 font-medium">
-                  <input
-                    type="number"
-                    value={multiplier}
-                    min={0}
-                    className="w-full border border-gray-300 px-4 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                    onChange={(e) =>
-                      handleMultiplierChange(product.id, Number(e.target.value))
-                    }
-                  />
-                </td>
-                <td className="px-4 py-2 font-medium">
-                  {((product.protein * multiplier) / 100).toFixed(1)}
-                </td>
-                <td className="px-4 py-2 font-medium">
-                  {((product.carbohydrates * multiplier) / 100).toFixed(1)}
-                </td>
-                <td className="px-4 py-2 font-medium">
-                  {((product.fat * multiplier) / 100).toFixed(1)}
-                </td>
-                <td className="px-4 py-2 font-medium">
-                  {((product.kcal * multiplier) / 100).toFixed(1)}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-type AddMealComponentProps = {
-  selectOptions: Option[];
-  setSelectedOption: (option: SingleValue<Option>) => void;
-  addMeal: (e: React.FormEvent) => void;
+type Targets = {
+  kcal: number;
+  meals: number;
 };
 
-function AddMealComponent(props: AddMealComponentProps) {
+function Todos() {
   return (
-    <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-2">
-      <div className="grid gap-3 mb-1 md:grid-cols-2">
-        <Select
-          options={props.selectOptions}
-          onChange={(option: SingleValue<Option>) =>
-            props.setSelectedOption(option)
-          }
-        />
-        <button
-          type="submit"
-          onClick={props.addMeal}
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Add Meal
-        </button>
-      </div>
-    </div>
-  );
-}
-
-type MealAdjustmentTableProps = {
-  i: number;
-  mealData: MealData;
-};
-
-function MealAdjustmentTable(props: MealAdjustmentTableProps) {
-  return (
-    <div
-      key={props.i}
-      className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-10"
-    >
-      <TableHeader {...props.mealData} />
-      <TableContent {...props.mealData} />
+    <div className="flex flex-col gap-10 mt-10">
+      <h2>TODOS</h2>
+      <ul>
+        <li>
+          {" "}
+          - User input: target calories, target number of meals, if too much
+          calories planned then highlight red
+        </li>
+        <li> - Persist planned meals for the week</li>
+        <li> - Show plot of % of microelements</li>
+        <li>
+          {" "}
+          - Build shopping list, allow for custom ordering by drag and drop
+        </li>
+        <li> - Download shopping list</li>
+      </ul>
     </div>
   );
 }
 
 export default function PlanSection() {
+  const [currentKcal, setCurrentKcal] = useState<number>(2000);
+  const [currentMeals, setCurrentMeals] = useState<number>(5);
+  const [currentDays, setCurrentDays] = useState<number>(5);
+
   const [allMealsFromDb, setAllMealsFromDb] = useState<MealData[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<Option[]>([]);
   const [selectOptions, setSelectOptions] = useState<Option[]>([]); // TODO: select options musi słuchać na eventy dodania meal i się aktualizować
@@ -168,22 +84,30 @@ export default function PlanSection() {
   };
 
   return (
-    <div className="flex flex-col gap-10 mt-10">
-      {selectedMeals.map((meal: Option, i) => {
-        const mealData = allMealsFromDb.find(
-          (dbMeal: MealData) => dbMeal.name === meal.label,
-        );
-        if (!mealData) {
-          return null;
-        }
-        return <MealAdjustmentTable mealData={mealData} i={i} />;
-      })}
+    <>
+      <div className="flex flex-col gap-10 mt-10">
+        <WeekSetup
+          setCurrentKcal={setCurrentKcal}
+          setCurrentMeals={setCurrentMeals}
+          setCurrentDays={setCurrentDays}
+          currentKcal={currentKcal}
+          currentMeals={currentMeals}
+          currentDays={currentDays}
+        />
 
-      <AddMealComponent
-        selectOptions={selectOptions}
-        setSelectedOption={setSelectedOption}
-        addMeal={addMeal}
-      />
-    </div>
+        <SelectedMeals
+          selectedMeals={selectedMeals}
+          allMealsFromDb={allMealsFromDb}
+        />
+
+        <AddMealInput
+          selectOptions={selectOptions}
+          setSelectedOption={setSelectedOption}
+          addMeal={addMeal}
+        />
+
+        <Todos />
+      </div>
+    </>
   );
 }

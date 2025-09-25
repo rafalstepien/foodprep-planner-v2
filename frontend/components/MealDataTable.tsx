@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import Select, { SingleValue } from "react-select";
 import { productService } from "../src/services/ProductsService.js";
 
-
-const buttonClassName = "focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
-
+const buttonClassName =
+  "w-5 h-5 flex items-center justify-center rounded-full text-white text-xl font-bold shadow bg-gray-300 hover:bg-gray-400 transition duration-400 transition-colors";
 
 type DeleteProductFromMealButtonProps = {
   mealId: number;
@@ -99,7 +98,7 @@ function AddProductForm(props: AddProductFormProps) {
   };
 
   return (
-    <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-2">
+    <div className="w-full p-4 rounded-2xl shadow-md flex flex-col gap-2">
       <div className="grid gap-3 mb-1 md:grid-cols-2">
         <Select
           options={selectOptions}
@@ -139,6 +138,10 @@ function TableHeader(props: TableHeaderProps) {
 type TableContentProps = {
   meal: Meal;
   deleteProductFromMeal: (mealId: number, productId: number) => void;
+  addProductToMeal: (data: {
+    mealId: number;
+    productId: number;
+  }) => Promise<void>;
 };
 
 type Product = {
@@ -167,7 +170,7 @@ function TableContent(props: TableContentProps) {
                 key={product.id}
                 className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}
               >
-                <td className="px-4 py-2 flex justify-center">
+                <td className="px-4 py-3 flex justify-center">
                   <DeleteProductFromMealButton
                     productId={product.id}
                     mealId={props.meal.id}
@@ -180,6 +183,10 @@ function TableContent(props: TableContentProps) {
           })}
         </tbody>
       </table>
+      <AddProductForm
+        meal={props.meal}
+        addProductToMeal={props.addProductToMeal}
+      />
     </div>
   );
 }
@@ -193,8 +200,11 @@ export function MealData({
   return (
     <>
       <TableHeader meal={meal} deleteMeal={deleteMeal} />
-      <TableContent meal={meal} deleteProductFromMeal={deleteProductFromMeal} />
-      <AddProductForm meal={meal} addProductToMeal={addProductToMeal} />
+      <TableContent
+        meal={meal}
+        deleteProductFromMeal={deleteProductFromMeal}
+        addProductToMeal={addProductToMeal}
+      />
     </>
   );
 }

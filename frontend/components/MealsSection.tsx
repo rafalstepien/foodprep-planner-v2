@@ -131,7 +131,7 @@ function CreateMealForm({ onSubmit }) {
 
   return (
     <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-4 mb-20">
-      <h2 className="text-lg font-bold text-gray-800">Create Meal</h2>
+      <h2 className="text-lg font-bold text-gray-800">Add New Meal</h2>
       <div className="grid gap-3 mb-1 md:grid-cols-2">
         <input
           type="text"
@@ -207,13 +207,13 @@ export default function MealsSection() {
   return (
     <div className="flex flex-col gap-30">
       <ErrorMessage error={error} />
-      <div>
-         <MealsList
-            meals={meals}
-            deleteProductFromMeal={deleteProductFromMeal}
-            deleteMeal={deleteMeal}
-            addProductToMeal={addProductToMeal}
-          />
+      <div className="grid md:grid-cols-2 gap-8">
+        <MealsList
+          meals={meals}
+          deleteProductFromMeal={deleteProductFromMeal}
+          deleteMeal={deleteMeal}
+          addProductToMeal={addProductToMeal}
+        />
       </div>
       <CreateMealForm onSubmit={addNewMeal} />
     </div>
