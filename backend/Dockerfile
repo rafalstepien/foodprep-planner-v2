@@ -22,7 +22,7 @@ FROM base AS prod
 
 COPY --from=builder /usr/local /usr/local
 
-COPY . .
+# COPY . .
 
 EXPOSE 8000
 

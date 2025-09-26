@@ -10,12 +10,15 @@ services:
       - type: bind
         source: database_data/
         target: /database_data
+      - type: bind
+        source: ./backend
+        target: /backend
 
-  # frontend:
+  # frontend-prod:
   #   env_file: .env
   #   build:
   #     context: frontend/.
-  #     dockerfile: Dockerfile.dev
+  #     dockerfile: Dockerfile
   #   volumes:
   #     - ./frontend
   #   ports:

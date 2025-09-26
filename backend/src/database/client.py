@@ -8,7 +8,7 @@ from .models import Products as DatabaseProduct
 from .models import Meals as DatabaseMeal
 from .models import MealProducts as DatabaseMealProducts
 
-from .dto import ProductDto, EmptyMealDto, AddProductsToMealDto, MealProductsToDelete
+from .dto import ProductDto, MealDto, AddProductsToMealDto, DeleteProductFromMealDto
 
 
 class DatabaseClient:
@@ -19,31 +19,44 @@ class DatabaseClient:
         )
         self._session = sessionmaker(bind=self.engine, expire_on_commit=False)
         self.session = self._session()
-
-    def populate_products_table(self, products_json: Path):
-        with open(products_json, encoding="utf-8") as f:
-            data = json.load(f)
-
-        for entry in data:
-            food = DatabaseProduct(
-                product=entry["product"],
-                protein=entry["protein"],
-                carbohydrates=entry["carbohydrates"],
-                fat=entry["fat"],
-                kcal=entry["kcal"],
-            )
-            self.session.merge(food)  # upsert
+    
+    def add_product(self, product: ProductDto):
+        db_product = DatabaseProduct(
+            product=product.name,
+            protein=product.protein,
+            carbohydrates=product.carbohydrates,
+            fat=product.fat,
+            kcal=product.kcal,
+        )
+        self.session.add(db_product)
         self.session.commit()
     
     def get_all_products(self) -> list[dict]:
         return [p.as_dict() for p in self.session.query(DatabaseProduct).all()]
-    
-    def get_one_product(self, product_id: int) -> dict:
+
+    def get_product_by_id(self, product_id: int) -> dict:
         p = self.session.query(DatabaseProduct)\
             .filter(DatabaseProduct.id == product_id)\
             .first()
         return p.as_dict()
-    
+        
+    def delete_product(self, id: int):
+        product = self.session.get(DatabaseProduct, id)
+        if product:
+            self.session.delete(product)
+        self.session.commit()
+        
+    def add_meal(self, dto: MealDto):
+        new_meal = DatabaseMeal(name=dto.name)
+        self.session.add(new_meal)
+        self.session.commit()
+
+    def delete_meal(self, id: int):
+        meal = self.session.get(DatabaseMeal, id)
+        if meal:
+            self.session.delete(meal)
+        self.session.commit()
+
     def get_all_meals(self) -> list[dict]:
         meals = self.session.query(DatabaseMeal)\
             .options(joinedload(DatabaseMeal.meal_products).joinedload(DatabaseMealProducts.products))\
@@ -54,70 +67,29 @@ class DatabaseClient:
                 "id": meal.id,
                 "name": meal.name,
                 "products": [
-                    self.get_one_product(p.product_id)
+                    self.get_product_by_id(p.product_id)
                     for p in meal.meal_products
                 ]
             } for meal in meals
         ]
     
-    def add_products(self, product_dto_array: list[ProductDto]):
-        for pd in product_dto_array:
-            new_product = DatabaseProduct(
-                product=pd.name,
-                protein=pd.protein,
-                carbohydrates=pd.carbohydrates,
-                fat=pd.fat,
-                kcal=pd.kcal,
-            )
-            self.session.merge(new_product)
-        self.session.commit()
+    def add_product_to_meal(self, dto: AddProductsToMealDto):
+        db_meal = self.session.query(DatabaseMeal)\
+            .filter(DatabaseMeal.id == dto.meal_id)\
+            .first()
         
-    def delete_products(self, product_ids: list[int]):
-        for _id in product_ids:
-            product = self.session.get(DatabaseProduct, _id)
-            if product:
-                self.session.delete(product)
-        self.session.commit()
-    
-    def add_products_to_meals(self, meals_dto_array: list[AddProductsToMealDto]):
-        for request_meal in meals_dto_array:
-            db_meal = self.session.query(DatabaseMeal)\
-                .filter(DatabaseMeal.id == request_meal.meal_id)\
-                .first()
-                
-            new_products = [
-                DatabaseMealProducts(product_id=p_id) for p_id in request_meal.products  # TODO: handle case when some product don't exist
-            ]
-            db_meal.meal_products += new_products
-            self.session.merge(db_meal)
-        self.session.commit()
-        # # TODO: handle sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: meals.name
-
-        
-    def add_empty_meal(self, meals_dto_array: list[EmptyMealDto]):
-        for m in meals_dto_array:
-            new_meal = DatabaseMeal(name=m.name)
-            self.session.merge(new_meal)
+        new_product = DatabaseMealProducts(product_id=dto.product_id) # TODO: handle case when some product don't exist
+        db_meal.meal_products.append(new_product)  # TODO: handle when product already exists in this meal (sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: meals.name)
+        self.session.add(db_meal)
         self.session.commit()
 
-    def delete_meals(self, meal_ids: list[int]):
-        for _id in meal_ids:
-            meal = self.session.get(DatabaseMeal, _id)
-            if meal:
-                self.session.delete(meal)
-        self.session.commit()
-        
-    def delete_products_from_meals(self, meals_products_dto_array: list[MealProductsToDelete]):
-        for request_meal in meals_products_dto_array:
-            db_meal = self.session.query(DatabaseMeal)\
-                .filter(DatabaseMeal.id == request_meal.meal_id)\
-                .first()
-            
-            new_products = [
-                p for p in db_meal.meal_products
-                if p.product_id not in request_meal.product_ids
-            ]
-            
-            db_meal.meal_products = new_products
-            self.session.merge(db_meal)
+    def delete_product_from_meal(self, dto: DeleteProductFromMealDto):
+        db_meal = self.session.query(DatabaseMeal)\
+            .filter(DatabaseMeal.id == dto.meal_id)\
+            .first()
+        db_meal.meal_products = [
+            p for p in db_meal.meal_products
+            if p.product_id != dto.product_id
+        ]
+        self.session.add(db_meal)
         self.session.commit()

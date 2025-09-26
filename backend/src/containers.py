@@ -6,7 +6,8 @@ from .database import DatabaseClient
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=[
-            ".api.endpoints",
+            ".api.endpoints.products",
+            ".api.endpoints.meals",
         ]
     )
 

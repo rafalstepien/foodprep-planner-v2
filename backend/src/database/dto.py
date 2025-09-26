@@ -11,17 +11,17 @@ class ProductDto:
 
 
 @dataclass(frozen=True)
-class EmptyMealDto:
+class MealDto:
     name: str
 
 
 @dataclass(frozen=True)
 class AddProductsToMealDto:
     meal_id: int
-    products: list[int]
+    product_id: int
 
 
 @dataclass(frozen=True)
-class MealProductsToDelete:
+class DeleteProductFromMealDto:
     meal_id: int
-    product_ids: list[int]
+    product_id: int

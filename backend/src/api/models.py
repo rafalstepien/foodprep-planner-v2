@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-# --------------- OPERATIONS ON PRODUCTS ---------------
-class CreateProductData(BaseModel):
+
+class Product(BaseModel):
     name: str
     protein: float
     carbohydrates: float
@@ -9,47 +9,8 @@ class CreateProductData(BaseModel):
     kcal: float
 
 
-class InputProducts(BaseModel):
-    products: list[CreateProductData]
-    
-    
-class ProductsToDelete(BaseModel):
-    ids: list[int]
-
-# ---------------------------------------------------
-# --------------- OPERATIONS ON MEALS ---------------
-class CreateMealData(BaseModel):
+class Meal(BaseModel):
     name: str
-
-
-class InputMeals(BaseModel):
-    meals: list[CreateMealData]
-
-
-class MealsToDelete(BaseModel):
-    ids: list[int]
-    
-# ------------------------------------------------------------------
-# --------------- OPERATIONS ON PRODUCTS UNDER MEALS ---------------
-
-class AddProductsToMealData(BaseModel):
-    meal_id: int
-    products: list[int]
-    
-
-class InputMealProducts(BaseModel):
-    meals: list[AddProductsToMealData]
-
-
-class ProductsToDeleteFromMeal(BaseModel):
-    meal_id: int
-    product_ids: list[int]
-
-
-class InputMealsProductsToDelete(BaseModel):
-    meals: list[ProductsToDeleteFromMeal]
-
-# ------------------------------------------------------------------
 
 
 class OutputProduct(BaseModel):

@@ -1,9 +1,7 @@
-import subprocess
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api import router
+from .api import meals_router, products_router
 from .containers import Container
 from .settings import Settings
 
@@ -13,11 +11,10 @@ def create_app() -> FastAPI:
     settings = Settings()
     container.config.from_pydantic(settings)
 
-    # subprocess.run(["alembic", "upgrade", "head"], check=True)
-
     app = FastAPI()
     app.container = container
-    app.include_router(router)
+    app.include_router(products_router)
+    app.include_router(meals_router)
 
     app.add_middleware(
         CORSMiddleware,

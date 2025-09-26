@@ -56,5 +56,3 @@ class MealProducts(Base):
         return {
             "product_id": self.product_id,
         }
-    
-    
