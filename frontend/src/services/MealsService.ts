@@ -2,19 +2,16 @@ const API_BASE_URL = "http://localhost:8000";
 const MEALS_ENDPOINT = `${API_BASE_URL}/meals`;
 const COMMON_HEADERS = { "Content-Type": "application/json" };
 
-type Meal = {
-  name: string;
-};
 
-type MealToDeleteProductsFrom = {
-  meal_id: number;
-  product_ids: number[];
-};
+type MealResponse = {
+  id: number
+  name: string
+}
 
-type AddProductToMealSchema = {
-  mealId: number;
-  productId: number;
-};
+type MealProductData = {
+  mealId: number
+  productId: number
+}
 
 export const mealsService = {
   async getAll() {
@@ -22,44 +19,35 @@ export const mealsService = {
     if (!response.ok) {
       throw new Error(`Failed to fetch meals: ${response.status}`);
     }
-    return response.json(); // TODO: handle sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: products.product
+    return response.json();
   },
 
-  async createNewMeal(meal: Meal) {
+  async create(name: string): Promise<MealResponse> {
     const response = await fetch(MEALS_ENDPOINT, {
       method: "POST",
       headers: COMMON_HEADERS,
-      body: JSON.stringify({ meals: [meal] }),
+      body: JSON.stringify({ name: name}),
     });
     if (!response.ok) {
       throw new Error(`Failed to create meal: ${response.status}`);
     }
+    return response.json();
   },
 
-  async deleteProductFromMeal(meal: MealToDeleteProductsFrom) {
-    const response = await fetch(`${API_BASE_URL}/meals_products`, {
+  async deleteProductFromMeal(data: MealProductData) {
+    const response = await fetch(`${MEALS_ENDPOINT}/${data.mealId}/${data.productId}`, {
       method: "DELETE",
       headers: COMMON_HEADERS,
-      body: JSON.stringify({ meals: [meal] }),
     });
     if (!response.ok) {
       throw new Error(`Failed to delete meal: ${response.status}`);
     }
   },
 
-  async addProductToMeal(newMeal: AddProductToMealSchema) {
-    var mealJson = JSON.stringify({
-      meals: [
-        {
-          meal_id: newMeal.mealId,
-          products: [newMeal.productId],
-        },
-      ],
-    });
-    const response = await fetch(MEALS_ENDPOINT, {
+  async addProductToMeal(data: MealProductData) {
+    const response = await fetch(`${MEALS_ENDPOINT}/${data.mealId}/${data.productId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: mealJson,
     });
     if (!response.ok) {
       throw new Error(`Failed to create meal: ${response.status}`);
@@ -67,10 +55,9 @@ export const mealsService = {
   },
 
   async deleteMeal(mealId: number) {
-    const response = await fetch(`${API_BASE_URL}/meals`, {
+    const response = await fetch(`${API_BASE_URL}/meals/${mealId}`, {
       method: "DELETE",
       headers: COMMON_HEADERS,
-      body: JSON.stringify({ ids: [mealId] }),
     });
     if (!response.ok) {
       throw new Error(`Failed to delete meal: ${response.status}`);

@@ -50,6 +50,7 @@ class DatabaseClient:
         new_meal = DatabaseMeal(name=dto.name)
         self.session.add(new_meal)
         self.session.commit()
+        return new_meal.id
 
     def delete_meal(self, id: int):
         meal = self.session.get(DatabaseMeal, id)

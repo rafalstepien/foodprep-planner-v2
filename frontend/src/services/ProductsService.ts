@@ -29,22 +29,30 @@ export const productService = {
     return response.json(); // TODO: handle sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: products.product
   },
 
-  async create(product: Product) {
+  async getById(productId: number): Promise<ReturnProduct> {
+    const response = await fetch(PRODUCTS_ENDPOINT + `/${productId}`)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch product: ${response.status}`);
+    }
+    return response.json();
+  },
+
+  async create(product: Product): Promise<Product> {
     const response = await fetch(PRODUCTS_ENDPOINT, {
       method: "POST",
       headers: BASE_HEADERS,
-      body: JSON.stringify({ products: [product] }),
+      body: JSON.stringify(product),
     });
     if (!response.ok) {
       throw new Error(`Failed to create product: ${response.status}`);
     }
+    return response.json()
   },
 
   async delete(productId: number) {
-    const response = await fetch(PRODUCTS_ENDPOINT, {
+    const response = await fetch(PRODUCTS_ENDPOINT + `/${productId}`, {
       method: "DELETE",
       headers: BASE_HEADERS,
-      body: JSON.stringify({ ids: [productId] }), // TODO: instead of passing it in body, pass in url
     });
     if (!response.ok) {
       throw new Error(`Failed to delete product: ${response.status}`);

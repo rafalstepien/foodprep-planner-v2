@@ -1,6 +1,5 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Response, status
-
 from ..models import Meal, OutputMeal
 from ...containers import Container
 from ...database import DatabaseClient, MealDto, AddProductsToMealDto, DeleteProductFromMealDto
@@ -23,9 +22,9 @@ async def get_all_meals(
 async def add_meal(
     meal: Meal,
     db_client: DatabaseClient = Depends(Provide[Container.db_client]),
-) -> Meal:
-    db_client.add_meal(MealDto(name=meal.name))
-    return meal
+) -> dict[str, str | int]:
+    meal_id = db_client.add_meal(MealDto(name=meal.name))
+    return {"id": str(meal_id), "name": meal.name}
 
 
 @router.delete("/meals/{meal_id}")

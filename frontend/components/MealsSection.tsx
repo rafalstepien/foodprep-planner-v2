@@ -32,11 +32,7 @@ function useMeals() {
     async (meal) => {
       setError(null);
       try {
-        const newMeal = {
-          name: meal.name,
-        };
-
-        await mealsService.createNewMeal(newMeal);
+        await mealsService.create(meal.name);
         await fetchMeals();
       } catch (err) {
         setError(err.message);
@@ -51,8 +47,8 @@ function useMeals() {
       setError(null);
       try {
         await mealsService.deleteProductFromMeal({
-          meal_id: mealId,
-          product_ids: [productId],
+          mealId: mealId,
+          productId: productId,
         });
       } catch (err) {
         setError(err.message);
