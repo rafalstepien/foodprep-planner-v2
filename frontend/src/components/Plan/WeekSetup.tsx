@@ -1,4 +1,4 @@
-import type { SetupData } from "./Types";
+import type { SetupData } from "../Types";
 
 type WeekSetupProps = {
   setupData: SetupData;

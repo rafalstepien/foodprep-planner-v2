@@ -1,4 +1,6 @@
-import type { MealData, ProductData, ProductAmount, Totals } from "./Types";
+import type { MealData, ProductData, ProductAmount } from "../Types";
+import { calculateTotals } from "../Utils";
+
 
 function TableHeader(meal: MealData) {
   return (
@@ -88,29 +90,10 @@ type MealSummaryProps = {
 };
 
 function MealSummary(props: MealSummaryProps) {
-  const idsOfProductsBelongingToMeal = props.mealData.products.map(
-    (productData: ProductData) => productData.id,
-  );
-  const mealProductsAmounts = Object.fromEntries(
-    Object.entries(props.productAmounts).filter(([key, value]) =>
-      idsOfProductsBelongingToMeal.includes(Number(key)),
-    ),
-  );
-
   const productMap = Object.fromEntries(
     props.mealData.products.map((p) => [p.id, p]),
   );
-  const totals: Totals = { kcal: 0, protein: 0, carbs: 0, fat: 0 };
-
-  for (const [id, amount] of Object.entries(mealProductsAmounts)) {
-    const product = productMap[id];
-    if (!product || amount <= 0) continue;
-
-    totals.kcal += ((product.kcal ?? 0) * amount) / 100;
-    totals.protein += ((product.protein ?? 0) * amount) / 100;
-    totals.carbs += ((product.carbohydrates ?? 0) * amount) / 100;
-    totals.fat += ((product.fat ?? 0) * amount) / 100;
-  }
+  const totals = calculateTotals({productMap: productMap, productAmounts: props.productAmounts})
 
   return (
     <div className="w-full overflow-x-auto rounded-2xl shadow gap-2 table-fixed flex">
@@ -142,14 +125,14 @@ function MealSummary(props: MealSummaryProps) {
   );
 }
 
-type MealAdjustmentTableProps = {
+type MealTableProps = {
   i: number;
   mealData: MealData;
   updateProductAmounts: (productId: number, productAmount: number) => void;
   productAmounts: ProductAmount;
 };
 
-export function MealAdjustmentTable(props: MealAdjustmentTableProps) {
+export function MealTable(props: MealTableProps) {
   return (
     <div
       key={props.i}

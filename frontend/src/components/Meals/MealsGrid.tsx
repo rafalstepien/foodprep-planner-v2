@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
-import { productService } from "../services/ProductsService";
+import { productService } from "../../services/ProductsService";
 
 const buttonClassName =
   "w-5 h-5 flex items-center justify-center rounded-full text-white text-xl font-bold shadow bg-gray-300 hover:bg-gray-400 transition duration-400 transition-colors";
@@ -195,7 +195,7 @@ function TableContent(props: TableContentProps) {
   );
 }
 
-export function MealData({
+export function MealsGrid({
   meal,
   deleteProductFromMeal,
   deleteMeal,

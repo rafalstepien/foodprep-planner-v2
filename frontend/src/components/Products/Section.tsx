@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { productService } from "../services/ProductsService";
+import { productService } from "../../services/ProductsService";
 
 const EMPTY_PRODUCT = {
   name: "",

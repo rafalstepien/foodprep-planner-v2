@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar.tsx";
-import ProductsSection from "./components/ProductsSection.tsx";
-import MealsSection from "./components/MealsSection.tsx";
-import PlanSection from "./components/PlanSection.tsx";
+import Navbar from "./components/Navbar/Navbar.tsx";
+import ProductsSection from "./components/Products/Section.tsx";
+import MealsSection from "./components/Meals/Section.tsx";
+import PlanSection from "./components/Plan/Section.tsx";
 
 export default function App() {
   return (
@@ -19,6 +19,3 @@ export default function App() {
     </>
   );
 }
-
-// TODOS:
-// - paste link / recipe -> AI infers products and suggest calories and microelements -> bulk add products

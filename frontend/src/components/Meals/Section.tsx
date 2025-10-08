@@ -1,13 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 
-import { mealsService } from "../services/MealsService.js";
-import { MealData } from "./MealDataTable.js";
-
-type Meal = {
-  id: number;
-  name: string;
-  products: [];
-};
+import { mealsService } from "../../services/MealsService.js";
+import { MealsGrid } from "./MealsGrid.js";
+import type { MealData } from "../Types.tsx"
 
 type AddProductToMealSchema = {
   mealId: number;
@@ -166,7 +161,7 @@ function ErrorMessage({ error }) {
 }
 
 type MealsListProps = {
-  meals: Meal[];
+  meals: MealData[];
   deleteProductFromMeal: (mealId: number, productId: number) => void;
   deleteMeal: (mealId: number) => void;
   addProductToMeal: (mealData: AddProductToMealSchema) => void;
@@ -175,7 +170,7 @@ type MealsListProps = {
 function MealsList(props: MealsListProps) {
   return props.meals.map((meal: Meal, i: number) => (
     <div key={i} className="w-full flex flex-col gap-2 mt-10">
-      <MealData
+      <MealsGrid
         meal={meal}
         deleteProductFromMeal={props.deleteProductFromMeal}
         deleteMeal={props.deleteMeal}

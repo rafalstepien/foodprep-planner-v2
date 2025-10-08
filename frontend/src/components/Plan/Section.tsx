@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { mealsService } from "../services/MealsService.ts";
-import { productService } from "../services/ProductsService.ts";
-import AddMealInput from "./Plan/AddMealInput.tsx";
-import WeekSetup from "./Plan/WeekSetup.tsx";
-import { MealAdjustmentTable } from "./Plan/MealAdjustment.tsx";
+import { mealsService } from "../../services/MealsService.ts";
+import { productService } from "../../services/ProductsService.ts";
+import AddMealInput from "./AddMealInput.tsx";
+import WeekSetup from "./WeekSetup.tsx";
+import { MealTable } from "./MealTable.tsx";
 import type {
   Option,
   MealData,
-  Totals,
   SetupData,
   ProductAmount,
   ProductData,
-} from "./Plan/Types.tsx";
+} from "../Types.tsx";
+import { calculateTotals } from "../Utils.ts";
 
 function Todos() {
   return (
@@ -40,7 +40,8 @@ function ShoppingList(props: ShoppingListProps) {
 }
 
 type AllMealsSummaryProps = {
-  totals: Totals;
+  productAmounts: ProductAmount;
+  allProductsFromDb: ProductData[];
 };
 
 function AllMealsSummary(props: AllMealsSummaryProps) {
@@ -51,30 +52,38 @@ function AllMealsSummary(props: AllMealsSummaryProps) {
   const colorCarbs = "text-[#E45A92]";
   const colorFat = "text-[#5D2F77]";
   const colorKcal = "text-[#3E1E68]";
+  
+
+    const productMap = Object.fromEntries(
+      props.allProductsFromDb.map((p) => [p.id, p]),
+    );
+
+    const totals = calculateTotals({productMap: productMap, productAmounts: props.productAmounts})
+
   return (
     <div className="w-full overflow-x-auto rounded-2xl shadow gap-2 flex justify-center items-center">
       <div className="w-1/3 flex rounded items-center justify-center py-10 gap-30">
         <div>
           <div className={`${baseClassNameNumber} ${colorProtein}`}>
-            {props.totals.protein.toFixed(1)}
+            {totals.protein.toFixed(1)}
           </div>
           <div className={`${baseClassNameLabel} ${colorProtein}`}>Protein</div>
         </div>
         <div>
           <div className={`${baseClassNameNumber} ${colorCarbs}`}>
-            {props.totals.carbs.toFixed(1)}
+            {totals.carbs.toFixed(1)}
           </div>
           <div className={`${baseClassNameLabel} ${colorCarbs}`}>Carbs</div>
         </div>
         <div>
           <div className={`${baseClassNameNumber} ${colorFat}`}>
-            {props.totals.fat.toFixed(1)}
+            {totals.fat.toFixed(1)}
           </div>
           <div className={`${baseClassNameLabel} ${colorFat}`}>Fat</div>
         </div>
         <div>
           <div className={`${baseClassNameNumber} ${colorKcal}`}>
-            {props.totals.kcal.toFixed(1)}
+            {totals.kcal.toFixed(1)}
           </div>
           <div className={`${baseClassNameLabel} ${colorKcal}`}>Calories</div>
         </div>
@@ -142,8 +151,6 @@ export default function PlanSection() {
     }
   };
 
-  // console.log(productAmounts)  // total amount of each product
-
   return (
     <>
       <div className="flex flex-col gap-10 mt-10">
@@ -156,7 +163,7 @@ export default function PlanSection() {
           if (!mealData) return null;
 
           return (
-            <MealAdjustmentTable
+            <MealTable
               key={i}
               mealData={mealData}
               i={i}
@@ -174,9 +181,9 @@ export default function PlanSection() {
           />
         ) : null}
 
-        {/* {selectedMeals.length > 0 ? (
-          <AllMealsSummary totals={totals} />
-        ) : null} */}
+        {selectedMeals.length > 0 ? (
+          <AllMealsSummary productAmounts={productAmounts} allProductsFromDb={allProductsFromDb}/>
+        ) : null}
 
         <Todos />
 
