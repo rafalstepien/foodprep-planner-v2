@@ -1,5 +1,4 @@
-import type { SetupData } from "./Types"
-
+import type { SetupData } from "./Types";
 
 type WeekSetupProps = {
   setupData: SetupData;
@@ -12,7 +11,6 @@ export default function WeekSetup(props: WeekSetupProps) {
   const colorKcal = "#3E1E68";
 
   const roundedButtonClassName = `w-10 h-10 flex items-center justify-center rounded-full text-white text-xl font-bold shadow bg-gray-300 hover:bg-gray-400 transition duration-400 transition-colors`;
-
 
   return (
     <div className="w-full p-6 bg-white rounded-2xl shadow-md flex flex-col gap-2">

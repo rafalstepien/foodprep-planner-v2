@@ -4,8 +4,14 @@ import { productService } from "../services/ProductsService.ts";
 import AddMealInput from "./Plan/AddMealInput.tsx";
 import WeekSetup from "./Plan/WeekSetup.tsx";
 import { MealAdjustmentTable } from "./Plan/MealAdjustment.tsx";
-import type { Option, MealData, Totals, SetupData, ProductAmount, ProductData } from "./Plan/Types.tsx"
-
+import type {
+  Option,
+  MealData,
+  Totals,
+  SetupData,
+  ProductAmount,
+  ProductData,
+} from "./Plan/Types.tsx";
 
 function Todos() {
   return (
@@ -27,13 +33,10 @@ function Todos() {
 type ShoppingListProps = {
   selectedMeals: Option[];
   allMealsFromDb: MealData[];
-}
+};
 
-function ShoppingList (props: ShoppingListProps) {
-  return (
-    <>
-    </>
-  )
+function ShoppingList(props: ShoppingListProps) {
+  return <></>;
 }
 
 type AllMealsSummaryProps = {
@@ -80,7 +83,6 @@ function AllMealsSummary(props: AllMealsSummaryProps) {
   );
 }
 
-
 export default function PlanSection() {
   const defaultSetupData = {
     numberOfKcal: 2500,
@@ -113,7 +115,7 @@ export default function PlanSection() {
       );
     };
     fetchMeals();
-  }, []);  // fetches all meals from db
+  }, []); // fetches all meals from db
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -121,18 +123,16 @@ export default function PlanSection() {
       setAllproductsFromDb(products);
     };
     fetchProducts();
-  }, []);  // fetches all products from db
+  }, []); // fetches all products from db
 
   useEffect(() => {
-  const defaultProductAmounts = allProductsFromDb.reduce((acc, meal) => {
-    acc[meal.id] = 0;
-    return acc;
-    }, {} as ProductAmount
-  );  // sets the default amount of each product
+    const defaultProductAmounts = allProductsFromDb.reduce((acc, meal) => {
+      acc[meal.id] = 0;
+      return acc;
+    }, {} as ProductAmount); // sets the default amount of each product
 
-  setProductAmounts(defaultProductAmounts);
+    setProductAmounts(defaultProductAmounts);
   }, [allProductsFromDb]);
-
 
   const addMeal = (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,10 +147,7 @@ export default function PlanSection() {
   return (
     <>
       <div className="flex flex-col gap-10 mt-10">
-        <WeekSetup
-          setSetupData={setSetupData}
-          setupData={setupData}
-        />
+        <WeekSetup setSetupData={setSetupData} setupData={setupData} />
 
         {selectedMeals.map((meal: Option, i) => {
           const mealData = allMealsFromDb.find(
@@ -168,13 +165,13 @@ export default function PlanSection() {
             />
           );
         })}
-        
+
         {selectedMeals.length < setupData.numberOfMeals ? (
           <AddMealInput
-          selectOptions={selectOptions}
-          setSelectedOption={setSelectedOption}
-          addMeal={addMeal}
-        />
+            selectOptions={selectOptions}
+            setSelectedOption={setSelectedOption}
+            addMeal={addMeal}
+          />
         ) : null}
 
         {/* {selectedMeals.length > 0 ? (

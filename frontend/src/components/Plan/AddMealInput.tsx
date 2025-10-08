@@ -1,5 +1,5 @@
 import Select from "react-select";
-import type { Option } from "./Types"
+import type { Option } from "./Types";
 
 type AddMealInputProps = {
   selectOptions: Option[];

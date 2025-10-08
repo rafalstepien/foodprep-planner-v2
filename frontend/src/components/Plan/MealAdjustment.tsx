@@ -1,6 +1,4 @@
-import { useEffect } from "react";
-import type { MealData, ProductData, ProductAmount, Totals} from "./Types"
-
+import type { MealData, ProductData, ProductAmount, Totals } from "./Types";
 
 function TableHeader(meal: MealData) {
   return (
@@ -14,7 +12,7 @@ type TableContentProps = {
   meal: MealData;
   multipliers: Record<number, number>;
   updateProductAmounts: (productId: number, productAmount: number) => void;
-  productAmounts: ProductAmount
+  productAmounts: ProductAmount;
 };
 
 function TableContent(props: TableContentProps) {
@@ -45,21 +43,36 @@ function TableContent(props: TableContentProps) {
                   min={0}
                   className="w-full border border-gray-300 px-4 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                   onChange={(e) =>
-                    props.updateProductAmounts(product.id, Number(e.target.value))
+                    props.updateProductAmounts(
+                      product.id,
+                      Number(e.target.value),
+                    )
                   }
                 />
               </td>
               <td className="px-4 py-2 font-medium">
-                {((product.protein * props.productAmounts[product.id]) / 100).toFixed(1)}
+                {(
+                  (product.protein * props.productAmounts[product.id]) /
+                  100
+                ).toFixed(1)}
               </td>
               <td className="px-4 py-2 font-medium">
-                {((product.carbohydrates * props.productAmounts[product.id]) / 100).toFixed(1)}
+                {(
+                  (product.carbohydrates * props.productAmounts[product.id]) /
+                  100
+                ).toFixed(1)}
               </td>
               <td className="px-4 py-2 font-medium">
-                {((product.fat * props.productAmounts[product.id]) / 100).toFixed(1)}
+                {(
+                  (product.fat * props.productAmounts[product.id]) /
+                  100
+                ).toFixed(1)}
               </td>
               <td className="px-4 py-2 font-medium">
-                {((product.kcal * props.productAmounts[product.id]) / 100).toFixed(1)}
+                {(
+                  (product.kcal * props.productAmounts[product.id]) /
+                  100
+                ).toFixed(1)}
               </td>
             </tr>
           );
@@ -71,29 +84,33 @@ function TableContent(props: TableContentProps) {
 
 type MealSummaryProps = {
   mealData: MealData;
-  productAmounts: ProductAmount
+  productAmounts: ProductAmount;
 };
 
 function MealSummary(props: MealSummaryProps) {
-
-  const idsOfProductsBelongingToMeal = props.mealData.products.map((productData: ProductData) => (productData.id))
+  const idsOfProductsBelongingToMeal = props.mealData.products.map(
+    (productData: ProductData) => productData.id,
+  );
   const mealProductsAmounts = Object.fromEntries(
-      Object.entries(props.productAmounts).filter(([key, value]) => idsOfProductsBelongingToMeal.includes(Number(key)))
+    Object.entries(props.productAmounts).filter(([key, value]) =>
+      idsOfProductsBelongingToMeal.includes(Number(key)),
+    ),
   );
 
-  const productMap = Object.fromEntries(props.mealData.products.map(p => [p.id, p]));
+  const productMap = Object.fromEntries(
+    props.mealData.products.map((p) => [p.id, p]),
+  );
   const totals: Totals = { kcal: 0, protein: 0, carbs: 0, fat: 0 };
 
   for (const [id, amount] of Object.entries(mealProductsAmounts)) {
     const product = productMap[id];
     if (!product || amount <= 0) continue;
 
-    totals.kcal += (product.kcal ?? 0) * amount / 100;
-    totals.protein += (product.protein ?? 0) * amount / 100;
-    totals.carbs += (product.carbohydrates ?? 0) * amount / 100;
-    totals.fat += (product.fat ?? 0) * amount / 100;
+    totals.kcal += ((product.kcal ?? 0) * amount) / 100;
+    totals.protein += ((product.protein ?? 0) * amount) / 100;
+    totals.carbs += ((product.carbohydrates ?? 0) * amount) / 100;
+    totals.fat += ((product.fat ?? 0) * amount) / 100;
   }
-
 
   return (
     <div className="w-full overflow-x-auto rounded-2xl shadow gap-2 table-fixed flex">
@@ -112,7 +129,9 @@ function MealSummary(props: MealSummaryProps) {
           <tr className="bg-blue-50">
             <td className="px-4 py-2 font-medium">Total</td>
             <td className="px-4 py-2 font-medium"></td>
-            <td className="px-4 py-2 font-medium">{totals.protein.toFixed(1)}</td>
+            <td className="px-4 py-2 font-medium">
+              {totals.protein.toFixed(1)}
+            </td>
             <td className="px-4 py-2 font-medium">{totals.carbs.toFixed(1)}</td>
             <td className="px-4 py-2 font-medium">{totals.fat.toFixed(1)}</td>
             <td className="px-4 py-2 font-medium">{totals.kcal.toFixed(1)}</td>
@@ -127,7 +146,7 @@ type MealAdjustmentTableProps = {
   i: number;
   mealData: MealData;
   updateProductAmounts: (productId: number, productAmount: number) => void;
-  productAmounts: ProductAmount
+  productAmounts: ProductAmount;
 };
 
 export function MealAdjustmentTable(props: MealAdjustmentTableProps) {
@@ -151,10 +170,3 @@ export function MealAdjustmentTable(props: MealAdjustmentTableProps) {
     </div>
   );
 }
-
-type Totals = {
-  protein: number;
-  fat: number;
-  carbs: number;
-  kcal: number;
-};
