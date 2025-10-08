@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import Navbar from "../components/Navbar.tsx";
-import ProductsSection from "../components/ProductsSection.tsx";
-import MealsSection from "../components/MealsSection.tsx";
-import PlanSection from "../components/PlanSection.tsx";
+import Navbar from "./components/Navbar.tsx";
+import ProductsSection from "./components/ProductsSection.tsx";
+import MealsSection from "./components/MealsSection.tsx";
+import PlanSection from "./components/PlanSection.tsx";
 
 export default function App() {
   return (

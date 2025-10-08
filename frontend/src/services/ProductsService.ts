@@ -30,7 +30,7 @@ export const productService = {
   },
 
   async getById(productId: number): Promise<ReturnProduct> {
-    const response = await fetch(PRODUCTS_ENDPOINT + `/${productId}`)
+    const response = await fetch(PRODUCTS_ENDPOINT + `/${productId}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch product: ${response.status}`);
     }
@@ -46,7 +46,7 @@ export const productService = {
     if (!response.ok) {
       throw new Error(`Failed to create product: ${response.status}`);
     }
-    return response.json()
+    return response.json();
   },
 
   async delete(productId: number) {

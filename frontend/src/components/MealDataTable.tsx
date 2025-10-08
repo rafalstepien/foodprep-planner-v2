@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import Select, { SingleValue } from "react-select";
-import { productService } from "../src/services/ProductsService.js";
+import Select from "react-select";
+import { productService } from "../services/ProductsService";
 
 const buttonClassName =
   "w-5 h-5 flex items-center justify-center rounded-full text-white text-xl font-bold shadow bg-gray-300 hover:bg-gray-400 transition duration-400 transition-colors";
@@ -62,7 +62,7 @@ interface Option {
 }
 
 function AddProductForm(props: AddProductFormProps) {
-  const [selectOptions, setSelectOptions] = useState<Option[]>([]); // TODO: select options musi słuchać na eventy dodania produktu i się aktualizować
+  const [selectOptions, setSelectOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
 
   useEffect(() => {
@@ -85,7 +85,6 @@ function AddProductForm(props: AddProductFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedOption) {
-      // TODO: verify if product is already on the products list of this specific meal
       try {
         await props.addProductToMeal({
           mealId: props.meal.id,
@@ -102,7 +101,12 @@ function AddProductForm(props: AddProductFormProps) {
       <div className="grid gap-3 mb-1 md:grid-cols-2">
         <Select
           options={selectOptions}
-          onChange={(option: SingleValue<Option>) => setSelectedOption(option)}
+          onChange={(option) => setSelectedOption(option)}
+          menuPortalTarget={document.body}
+          menuPosition="fixed"
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          }}
         />
         <button
           type="submit"

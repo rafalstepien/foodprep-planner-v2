@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-import { mealsService } from "../src/services/MealsService.js";
+import { mealsService } from "../services/MealsService.js";
 import { MealData } from "./MealDataTable.js";
 
 type Meal = {
@@ -201,9 +201,9 @@ export default function MealsSection() {
   }, [fetchMeals]);
 
   return (
-    <div className="flex flex-col gap-30">
+    <div className="flex items-center flex-col gap-30">
       <ErrorMessage error={error} />
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="w-1/2 grid md:grid-cols-1 gap-4">
         <MealsList
           meals={meals}
           deleteProductFromMeal={deleteProductFromMeal}

@@ -1,13 +1,9 @@
-import Select, { SingleValue } from "react-select";
-
-interface Option {
-  value: number;
-  label: string;
-}
+import Select from "react-select";
+import type { Option } from "./Types"
 
 type AddMealInputProps = {
   selectOptions: Option[];
-  setSelectedOption: (option: SingleValue<Option>) => void;
+  setSelectedOption: (option: Option) => void;
   addMeal: (e: React.FormEvent) => void;
 };
 
@@ -17,9 +13,7 @@ export default function AddMealInput(props: AddMealInputProps) {
       <div className="grid gap-3 mb-1 md:grid-cols-2">
         <Select
           options={props.selectOptions}
-          onChange={(option: SingleValue<Option>) =>
-            props.setSelectedOption(option)
-          }
+          onChange={(option) => props.setSelectedOption(option)}
         />
         <button
           type="submit"
